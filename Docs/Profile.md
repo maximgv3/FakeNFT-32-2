@@ -1,1 +1,47 @@
-SwiftUI + MVVM
+# Profile Flow Decomposition
+
+**Студент:** Гвазава Максим Александрович  
+**Когорта:** 32  
+**Группа:** 2  
+**Эпик:** Профиль  
+**Ссылка:** https://github.com/users/maximgv3/projects/1
+
+## Module 1 — Экран профиля
+
+### Верстка
+- Экран профиля (фото, имя, описание, сайт, таблица с пунктами меню) (est: 140 min; fact: x min)
+
+### Логика
+- Навигация к экрану «Мои NFT» (est: 20 min; fact: x min)
+- Навигация к экрану «Избранные NFT» (est: 20 min; fact: x min)
+- Открытие сайта пользователя в WebView (est: 40 min; fact: x min)
+- Навигация к экрану редактирования профиля (est: 20 min; fact: x min)
+- Получение данных профиля из сети (est: 90 min; fact: x min)
+
+**Total:** est: 310 min; fact: x min
+
+## Module 2 — Экран «Мои NFT»
+
+### Верстка
+- Экран «Мои NFT» со списком NFT (иконка, название, автор, цена) (est: 120 min; fact: x min)
+- Сообщение об отсутствии NFT (est: 10 min; fact: x min)
+- Реализация сортировки (est: 30 min; fact: x min)
+
+### Логика
+- Получение списка NFT пользователя из сети (est: 90 min; fact: x min)
+- Сортировка списка NFT (est: 40 min; fact: x min)
+- Сохранение выбранного способа сортировки (est: 20 min; fact: x min)
+
+**Total:** est: 310 min; fact: x min
+
+## Module 3 — Экран «Избранные NFT»
+
+### Верстка
+- Экран «Избранные NFT» с сеткой NFT (иконка, кнопка удаления из избранного, название, рейтинг, цена) (est: 140 min; fact: x min)
+- Сообщение об отсутствии избранных NFT (est: 20 min; fact: x min)
+
+### Логика
+- Получение списка избранных NFT из сети (est: 90 min; fact: x min)
+- Удаление NFT из избранного (est: 60 min; fact: x min)
+
+**Total:** est: 310 min; fact: x min
