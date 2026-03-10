@@ -10,6 +10,7 @@ import SwiftUI
 struct CartListView: View {
     let items: [CartItem]
     let onRemove: (CartItem) -> Void
+    let onRefresh: () async -> Void
     
     var body: some View {
         List {
@@ -32,12 +33,16 @@ struct CartListView: View {
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
         .background(Color("ypWhite"))
+        .refreshable {
+            await onRefresh()
+        }
     }
 }
 
 #Preview {
     CartListView(
         items: CartItem.mockItems,
-        onRemove: { _ in }
+        onRemove: { _ in },
+        onRefresh: { }
     )
 }

@@ -31,7 +31,7 @@ struct TabBarView: View {
             
             // Корзина
             NavigationStack {
-                CartView(items: CartItem.mockItems)
+                CartView()
             }
             .tabItem {
                 VStack {
