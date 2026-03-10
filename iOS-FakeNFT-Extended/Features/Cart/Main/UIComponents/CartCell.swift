@@ -62,14 +62,6 @@ struct CartCell: View {
         )
         .padding()
         .background(Color("ypWhite"))
-        
-        CartCell(
-            cartItem: .mock1,
-            removeAction: { }
-        )
-        .padding()
-        .background(Color("ypBlack"))
-        .colorScheme(.dark)
     }
 }
 
