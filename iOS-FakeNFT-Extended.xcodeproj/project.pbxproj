@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4524E0992F61C51000843716 /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4524E0982F61C50A00843716 /* WebView.swift */; };
 		ABC5E1D82C3204A9002B4068 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = ABC5E1D72C3204A9002B4068 /* Kingfisher */; };
 		ABC5E1E22C320535002B4068 /* ProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = ABC5E1E12C320535002B4068 /* ProgressHUD */; };
 		F1243B7C2F5C5AB20049A796 /* iOS_FakeNFT_ExtendedApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1243B482F5C59E60049A796 /* iOS_FakeNFT_ExtendedApp.swift */; };
@@ -44,6 +45,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4524E0982F61C50A00843716 /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
 		ABC5E1682C31F5AF002B4068 /* iOS-FakeNFT-Extended.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "iOS-FakeNFT-Extended.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1243B482F5C59E60049A796 /* iOS_FakeNFT_ExtendedApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOS_FakeNFT_ExtendedApp.swift; sourceTree = "<group>"; };
 		F1243B492F5C59E60049A796 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -177,6 +179,7 @@
 				F1243B5B2F5C59E60049A796 /* LoadingView.swift */,
 				F1243B5C2F5C59E60049A796 /* ErrorView.swift */,
 				F1243B5D2F5C59E60049A796 /* LinePageControl.swift */,
+				4524E0982F61C50A00843716 /* WebView.swift */,
 			);
 			path = SharedUI;
 			sourceTree = "<group>";
@@ -398,6 +401,7 @@
 				F1243B842F5C5AE60049A796 /* NftByIdRequest.swift in Sources */,
 				F1243B922F5C5B290049A796 /* NftDetailViewController.swift in Sources */,
 				F1243B812F5C5AD90049A796 /* NetworkRequest.swift in Sources */,
+				4524E0992F61C51000843716 /* WebView.swift in Sources */,
 				F1243B7C2F5C5AB20049A796 /* iOS_FakeNFT_ExtendedApp.swift in Sources */,
 				F1243B852F5C5AE90049A796 /* RequestConstants.swift in Sources */,
 				F1243B8C2F5C5B070049A796 /* LinePageControl.swift in Sources */,
