@@ -9,6 +9,7 @@ import SwiftUI
 
 struct CartView: View {
     @State private var viewModel: CartViewModel
+    @State private var isSortDialogPresented = false
     
     init(viewModel: CartViewModel) {
         _viewModel = State(initialValue: viewModel)
@@ -60,6 +61,36 @@ struct CartView: View {
             }
         }
         .background(Color("ypWhite"), ignoresSafeAreaEdges: .all)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    isSortDialogPresented = true
+                } label: {
+                    Image("sort")
+                        .renderingMode(.template)
+                        .foregroundStyle(Color("ypBlack"))
+                }
+            }
+        }
+        .confirmationDialog(
+            "Сортировка",
+            isPresented: $isSortDialogPresented,
+            titleVisibility: .visible
+        ) {
+            Button("По цене") {
+                viewModel.applySort(.price)
+            }
+            
+            Button("По рейтингу") {
+                viewModel.applySort(.rating)
+            }
+            
+            Button("По названию") {
+                viewModel.applySort(.name)
+            }
+            
+            Button("Закрыть", role: .cancel) { }
+        }
         .task {
             await viewModel.load()
         }

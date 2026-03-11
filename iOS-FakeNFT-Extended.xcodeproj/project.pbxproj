@@ -54,6 +54,7 @@
 		F17CCB972F6191E30069C181 /* CartService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F17CCB962F6191E30069C181 /* CartService.swift */; };
 		F17CCB992F6191FE0069C181 /* CartServiceImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = F17CCB982F6191FE0069C181 /* CartServiceImpl.swift */; };
 		F17CCB9B2F61945F0069C181 /* MockCartService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F17CCB9A2F61945F0069C181 /* MockCartService.swift */; };
+		F17CCB9D2F61B3660069C181 /* CartSortOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = F17CCB9C2F61B3660069C181 /* CartSortOption.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -103,6 +104,7 @@
 		F17CCB962F6191E30069C181 /* CartService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartService.swift; sourceTree = "<group>"; };
 		F17CCB982F6191FE0069C181 /* CartServiceImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartServiceImpl.swift; sourceTree = "<group>"; };
 		F17CCB9A2F61945F0069C181 /* MockCartService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCartService.swift; sourceTree = "<group>"; };
+		F17CCB9C2F61B3660069C181 /* CartSortOption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartSortOption.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -343,6 +345,7 @@
 				F1243BCC2F5EC5BB0049A796 /* CartItem.swift */,
 				F17CCB8F2F6055960069C181 /* CartViewState.swift */,
 				F17CCB912F618FA50069C181 /* Order.swift */,
+				F17CCB9C2F61B3660069C181 /* CartSortOption.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -512,6 +515,7 @@
 				F1243BD92F5EC5BB0049A796 /* CartEmptyStateView.swift in Sources */,
 				F1243BDA2F5EC5BB0049A796 /* CartItem.swift in Sources */,
 				F1243B832F5C5AE10049A796 /* ExampleRequest.swift in Sources */,
+				F17CCB9D2F61B3660069C181 /* CartSortOption.swift in Sources */,
 				F17CCB992F6191FE0069C181 /* CartServiceImpl.swift in Sources */,
 				F1243B962F5C5B3A0049A796 /* NftDetailCellModel.swift in Sources */,
 				F1243B8A2F5C5AFF0049A796 /* LoadingView.swift in Sources */,
