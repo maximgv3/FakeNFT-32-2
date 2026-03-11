@@ -11,6 +11,14 @@ struct TabBarView: View {
                     )
                 }
                 .backgroundStyle(.background)
+            ProfileView()
+                .tabItem {
+                    Label(
+                        NSLocalizedString("Tab.profile", comment: ""),
+                        systemImage: "person.crop.circle.fill"
+                    )
+                }
+                .backgroundStyle(.background)
         }
     }
 }
