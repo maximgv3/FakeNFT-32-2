@@ -6,12 +6,14 @@ struct ProfileView: View {
         case edit
         case myNFTs
         case favoriteNFTs
+        case webView
     }
     @State private var path: [Route] = []
     
     private let profileName = "Name Surname"
     private let profileDescription = "Description description description description description description description description description description description description description description description description description description description"
     private let profileWebsiteText = "Link to website"
+    private let profileWebsiteURL = URL(string: "https://yandex.ru/legal/practicum_termsofuse")!
     private let myNFTCount = 112
     private let favoriteNFTCount = 11
     private let profileAvatarImageName = "profile_avatar_mock"
@@ -49,6 +51,8 @@ struct ProfileView: View {
                     MyNFTsView()
                 case .favoriteNFTs:
                     FavouriteNFTsView()
+                case .webView:
+                    WebView(url: profileWebsiteURL)
                 }
             }
         }
@@ -70,10 +74,13 @@ struct ProfileView: View {
                 .foregroundStyle(.ypBlack)
                 .padding(.top, 20)
                 .padding(.trailing, 2)
-            Text(profileWebsiteText)
-                .font(.system(size: 15, weight: .regular))
-                .foregroundStyle(.ypUBlue)
-                .padding(.top, 8)
+            Button(action: websiteTapped) {
+                Text(profileWebsiteText)
+                    .font(.system(size: 15, weight: .regular))
+                    .foregroundStyle(.ypUBlue)
+                    .padding(.top, 8)
+            }
+            .buttonStyle(.plain)
         }
     }
 
@@ -117,6 +124,10 @@ struct ProfileView: View {
 
     private func favoriteNFTsTapped() {
         path.append(.favoriteNFTs)
+    }
+    
+    private func websiteTapped() {
+        path.append(.webView)
     }
 }
 
