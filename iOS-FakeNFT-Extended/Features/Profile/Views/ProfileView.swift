@@ -2,6 +2,13 @@ import SwiftUI
 
 struct ProfileView: View {
 
+    private enum Route: Hashable {
+        case edit
+        case myNFTs
+        case favoriteNFTs
+    }
+    @State private var path: [Route] = []
+    
     private let profileName = "Name Surname"
     private let profileDescription = "Description description description description description description description description description description description description description description description description description description description"
     private let profileWebsiteText = "Link to website"
@@ -10,7 +17,7 @@ struct ProfileView: View {
     private let profileAvatarImageName = "profile_avatar_mock"
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
             ZStack {
                 Color.ypWhite
                     .ignoresSafeArea()
@@ -32,6 +39,16 @@ struct ProfileView: View {
                                 .foregroundStyle(.ypBlack)
                         }
                     }
+                }
+            }
+            .navigationDestination(for: Route.self) { route in
+                switch route {
+                case .edit:
+                    ProfileEditView()
+                case .myNFTs:
+                    MyNFTsView()
+                case .favoriteNFTs:
+                    FavouriteNFTsView()
                 }
             }
         }
@@ -91,15 +108,15 @@ struct ProfileView: View {
     }
 
     private func editTapped() {
-        print("Edit tapped")
+        path.append(.edit)
     }
 
     private func myNFTsTapped() {
-        print("My NFTs tapped")
+        path.append(.myNFTs)
     }
 
     private func favoriteNFTsTapped() {
-        print("Favorite NFTs tapped")
+        path.append(.favoriteNFTs)
     }
 }
 
