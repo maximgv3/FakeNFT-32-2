@@ -9,4 +9,5 @@ enum CartViewState {
     case loading
     case empty
     case content
+    case error(String)
 }
