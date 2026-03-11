@@ -18,7 +18,7 @@
 - Навигация к экрану редактирования профиля (est: 20 min; fact: 10 min)
 - Получение данных профиля из сети (est: 90 min; fact: 140 min)
 
-**Total:** est: 310 min; fact: x min
+**Total:** est: 310 min; fact: 360 min
 
 ## Module 2 — Экран «Мои NFT»
 
