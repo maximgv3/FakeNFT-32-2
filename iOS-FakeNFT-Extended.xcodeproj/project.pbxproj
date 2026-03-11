@@ -92,6 +92,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		45168AD22F618B7200CACD7B /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Profile;
+			sourceTree = "<group>";
+		};
 		ABC5E15F2C31F5AF002B4068 = {
 			isa = PBXGroup;
 			children = (
@@ -226,20 +233,6 @@
 			path = Catalog;
 			sourceTree = "<group>";
 		};
-		F1243B682F5C59E60049A796 /* Cart */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Cart;
-			sourceTree = "<group>";
-		};
-		F1243B692F5C59E60049A796 /* Profile */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Profile;
-			sourceTree = "<group>";
-		};
 		F1243B6F2F5C59E60049A796 /* NftDetails */ = {
 			isa = PBXGroup;
 			children = (
@@ -273,9 +266,8 @@
 		F1243B742F5C59E60049A796 /* Features */ = {
 			isa = PBXGroup;
 			children = (
+				45168AD22F618B7200CACD7B /* Profile */,
 				F1243B672F5C59E60049A796 /* Catalog */,
-				F1243B682F5C59E60049A796 /* Cart */,
-				F1243B692F5C59E60049A796 /* Profile */,
 				F1243B732F5C59E60049A796 /* Legacy */,
 			);
 			path = Features;
