@@ -12,8 +12,8 @@ struct CartItem: Identifiable, Hashable {
     let name: String
     let price: Double
     let rating: Int
-    let image: String
-    
+    let imageURL: URL?
+
     var priceText: String {
         "\(String(format: "%.2f", price).replacingOccurrences(of: ".", with: ",")) ETH"
     }
@@ -25,25 +25,25 @@ extension CartItem {
         name: "Ore",
         price: 3.24,
         rating: 5,
-        image: "mock_1"
+        imageURL: nil
     )
-    
+
     static let mock2 = CartItem(
         id: "2",
         name: "Moon",
         price: 1.40,
         rating: 4,
-        image: "mock_1"
+        imageURL: nil
     )
-    
+
     static let mock3 = CartItem(
         id: "3",
         name: "Meta",
         price: 7.90,
         rating: 3,
-        image: "mock_1"
+        imageURL: nil
     )
-    
+
     static let mockItems: [CartItem] = [
         .mock1,
         .mock2,

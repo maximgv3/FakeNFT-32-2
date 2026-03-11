@@ -8,7 +8,11 @@
 import SwiftUI
 
 struct CartView: View {
-    @State private var viewModel = CartViewModel()
+    @State private var viewModel: CartViewModel
+    
+    init(viewModel: CartViewModel) {
+        _viewModel = State(initialValue: viewModel)
+    }
     
     private var total: Double {
         viewModel.items.map(\.price).reduce(0, +)
@@ -17,7 +21,6 @@ struct CartView: View {
     var body: some View {
         Group {
             switch viewModel.state {
-                
             case .loading:
                 ProgressView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -32,7 +35,6 @@ struct CartView: View {
                     onRefresh: {
                         await viewModel.refresh()
                     }
-                    
                 )
                 .safeAreaInset(edge: .bottom) {
                     CartFooterView(
@@ -41,6 +43,20 @@ struct CartView: View {
                         payAction: { }
                     )
                 }
+                
+            case .error(let message):
+                VStack(spacing: 12) {
+                    Text(message)
+                        .multilineTextAlignment(.center)
+                    
+                    Button("Повторить") {
+                        Task {
+                            await viewModel.load()
+                        }
+                    }
+                }
+                .padding()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
         .background(Color("ypWhite"), ignoresSafeAreaEdges: .all)
@@ -50,8 +66,10 @@ struct CartView: View {
     }
 }
 
-#Preview("Filled after loading") {
+#Preview("Filled Cart") {
     NavigationStack {
-        CartView()
+        CartView(
+            viewModel: CartViewModel(cartService: MockCartService())
+        )
     }
 }

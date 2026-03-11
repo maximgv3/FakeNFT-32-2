@@ -13,14 +13,34 @@ struct CartCell: View {
     
     var body: some View {
         HStack(spacing: 16) {
-            Image(cartItem.image)
-                .resizable()
-                .scaledToFill()
-                .frame(width: 108, height: 108)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                .clipped()
+            
+            AsyncImage(url: cartItem.imageURL) { phase in
+                switch phase {
+                    
+                case .empty:
+                    ProgressView()
+                        .frame(width: 108, height: 108)
+                    
+                case .success(let image):
+                    image
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 108, height: 108)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .clipped()
+                    
+                case .failure:
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(Color.gray.opacity(0.2))
+                        .frame(width: 108, height: 108)
+                    
+                @unknown default:
+                    EmptyView()
+                }
+            }
             
             VStack(alignment: .leading, spacing: 8) {
+                
                 VStack(alignment: .leading, spacing: 4) {
                     Text(cartItem.name)
                         .font(.system(size: 17, weight: .bold))
