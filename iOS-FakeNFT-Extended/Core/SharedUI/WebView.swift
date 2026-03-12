@@ -16,6 +16,9 @@ struct WebView: View {
             }
         }
         .navigationBarBackButtonHidden(true)
+        .toolbar(.hidden, for: .tabBar)
+        .toolbarBackground(.visible, for: .navigationBar)
+        .toolbarBackground(Color.ypWhite, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 Button {
