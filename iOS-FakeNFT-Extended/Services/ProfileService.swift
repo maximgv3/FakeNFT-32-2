@@ -4,7 +4,7 @@ protocol ProfileService {
     func loadProfile(id: String) async throws -> Profile
 }
 
-final class ProfileServiceImpl: ProfileService {
+actor ProfileServiceImpl: ProfileService {
 
     private let networkClient: NetworkClient
 
