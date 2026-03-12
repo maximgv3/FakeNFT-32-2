@@ -7,76 +7,128 @@
 
 import SwiftUI
 
+// MARK: - CartView
+
 struct CartView: View {
+    
+    // MARK: - Properties
+    
     @State private var viewModel: CartViewModel
     @State private var isSortDialogPresented = false
+    
+    // MARK: - Init
     
     init(viewModel: CartViewModel) {
         _viewModel = State(initialValue: viewModel)
     }
     
+    // MARK: - Computed Properties
+    
     private var total: Double {
         viewModel.items.map(\.price).reduce(0, +)
     }
+    
+    // MARK: - Body
     
     var body: some View {
         Group {
             switch viewModel.state {
             case .loading:
-                ProgressView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                loadingView
                 
             case .empty:
-                CartEmptyStateView()
+                emptyView
                 
-            case .content:
-                CartListView(
-                    items: viewModel.items,
-                    onRemove: { _ in },
-                    onRefresh: {
-                        await viewModel.refresh()
-                    }
-                )
-                .safeAreaInset(edge: .bottom) {
-                    CartFooterView(
-                        totalCount: viewModel.items.count,
-                        totalPrice: total,
-                        payAction: { }
-                    )
-                }
+            case .success:
+                contentView
                 
             case .error(let message):
-                VStack(spacing: 12) {
-                    Text(message)
-                        .multilineTextAlignment(.center)
-                    
-                    Button("Повторить") {
-                        Task {
-                            await viewModel.load()
-                        }
-                    }
-                }
-                .padding()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                errorView(message)
             }
         }
-        .background(Color("ypWhite"), ignoresSafeAreaEdges: .all)
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    isSortDialogPresented = true
-                } label: {
-                    Image("sort")
-                        .renderingMode(.template)
-                        .foregroundStyle(Color("ypBlack"))
-                }
-            }
-        }
+        .background(backgroundView, ignoresSafeAreaEdges: .all)
+        .toolbar { sortToolbar }
         .confirmationDialog(
             "Сортировка",
             isPresented: $isSortDialogPresented,
             titleVisibility: .visible
         ) {
+            sortDialog
+        }
+        .task {
+            await viewModel.load()
+        }
+    }
+    
+    // MARK: - Views
+    
+    private var loadingView: some View {
+        ProgressView()
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+    
+    private var emptyView: some View {
+        CartEmptyStateView()
+    }
+    
+    private var contentView: some View {
+        CartListView(
+            items: viewModel.items,
+            onRemove: { _ in },
+            onRefresh: {
+                await viewModel.refresh()
+            }
+        )
+        .safeAreaInset(edge: .bottom) {
+            footerView
+        }
+    }
+    
+    private func errorView(_ message: String) -> some View {
+        VStack(spacing: 12) {
+            Text(message)
+                .multilineTextAlignment(.center)
+            
+            Button("Повторить") {
+                Task {
+                    await viewModel.load()
+                }
+            }
+        }
+        .padding()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+    
+    private var footerView: some View {
+        CartFooterView(
+            totalCount: viewModel.items.count,
+            totalPrice: total,
+            payAction: { }
+        )
+    }
+    
+    private var backgroundView: Color {
+        Color("ypWhite")
+    }
+    
+    // MARK: - Toolbar
+    
+    private var sortToolbar: some ToolbarContent {
+        ToolbarItem(placement: .topBarTrailing) {
+            Button {
+                isSortDialogPresented = true
+            } label: {
+                Image("sort")
+                    .renderingMode(.template)
+                    .foregroundStyle(Color("ypBlack"))
+            }
+        }
+    }
+    
+    // MARK: - Dialog
+    
+    private var sortDialog: some View {
+        Group {
             Button("По цене") {
                 viewModel.applySort(.price)
             }
@@ -91,11 +143,10 @@ struct CartView: View {
             
             Button("Закрыть", role: .cancel) { }
         }
-        .task {
-            await viewModel.load()
-        }
     }
 }
+
+// MARK: - Preview
 
 #Preview("Filled Cart") {
     NavigationStack {

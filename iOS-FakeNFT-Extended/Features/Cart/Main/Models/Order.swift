@@ -7,7 +7,12 @@
 
 import Foundation
 
+/// Модель заказа, получаемая с сервера
 struct Order: Decodable {
-    let nfts: [String]
+    
+    /// Уникальный идентификатор заказа
     let id: String
+    
+    /// Массив идентификаторов NFT, добавленных в корзину
+    let nfts: [String]
 }

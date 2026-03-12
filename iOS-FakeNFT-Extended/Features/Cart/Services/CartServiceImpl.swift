@@ -8,7 +8,7 @@
 import Foundation
 
 @MainActor
-final class CartServiceImpl: CartService {
+final class CartServiceImpl: CartServiceProtocol {
     private let networkClient: NetworkClient
     private let nftService: NftService
     

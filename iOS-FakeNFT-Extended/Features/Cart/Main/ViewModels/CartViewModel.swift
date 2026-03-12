@@ -8,30 +8,42 @@
 import Foundation
 import Observation
 
+// MARK: - Constants
+
+private enum Constants {
+    /// Ключ для сохранения выбранного способа сортировки в UserDefaults
+    static let selectedSortKey = "cart_selected_sort"
+}
+
+// MARK: - CartViewModel
+
 @Observable
 final class CartViewModel {
     
+    // MARK: - Public Properties
+    
+    /// Список товаров в корзине
     var items: [CartItem] = []
+    
+    /// Флаг первичной загрузки
     var isLoading = false
+    
+    /// Флаг обновления (pull-to-refresh)
     var isRefreshing = false
+    
+    /// Сообщение об ошибке, если произошла
     var errorMessage: String?
+    
+    /// Текущий выбранный способ сортировки
     var selectedSort: CartSortOption = .price
     
-    private let cartService: CartService
+    // MARK: - Private Properties
     
-    private enum Constants {
-        static let selectedSortKey = "cart_selected_sort"
-    }
+    private let cartService: CartServiceProtocol
     
-    init(cartService: CartService) {
-        self.cartService = cartService
-        
-        if let rawValue = UserDefaults.standard.string(forKey: Constants.selectedSortKey),
-           let savedSort = CartSortOption(rawValue: rawValue) {
-            selectedSort = savedSort
-        }
-    }
+    // MARK: - Computed Properties
     
+    /// Текущее состояние экрана на основе данных
     var state: CartViewState {
         if isLoading && items.isEmpty {
             return .loading
@@ -45,11 +57,24 @@ final class CartViewModel {
             return .empty
         }
         
-        return .content
+        return .success
     }
     
-    // MARK: - Sorting
+    // MARK: - Init
     
+    init(cartService: CartServiceProtocol) {
+        self.cartService = cartService
+        
+        if let rawValue = UserDefaults.standard.string(forKey: Constants.selectedSortKey),
+           let savedSort = CartSortOption(rawValue: rawValue) {
+            selectedSort = savedSort
+        }
+    }
+    
+    // MARK: - Public Methods
+    
+    /// Применить сортировку к списку товаров
+    /// - Parameter option: Выбранный способ сортировки
     @MainActor
     func applySort(_ option: CartSortOption) {
         selectedSort = option
@@ -62,23 +87,7 @@ final class CartViewModel {
         items = sortedItems(items, by: option)
     }
     
-    private func sortedItems(_ items: [CartItem], by option: CartSortOption) -> [CartItem] {
-        switch option {
-        case .price:
-            return items.sorted { $0.price < $1.price }
-            
-        case .rating:
-            return items.sorted { $0.rating > $1.rating }
-            
-        case .name:
-            return items.sorted {
-                $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending
-            }
-        }
-    }
-    
-    // MARK: - Load
-    
+    /// Загрузить товары в корзину
     @MainActor
     func load() async {
         guard items.isEmpty else { return }
@@ -97,8 +106,7 @@ final class CartViewModel {
         }
     }
     
-    // MARK: - Refresh
-    
+    /// Обновить список товаров (pull-to-refresh)
     @MainActor
     func refresh() async {
         guard !isRefreshing else { return }
@@ -113,6 +121,28 @@ final class CartViewModel {
             errorMessage = nil
         } catch {
             print("Cart refresh error: \(error)")
+        }
+    }
+    
+    // MARK: - Private Methods
+    
+    /// Отсортировать товары по выбранному критерию
+    /// - Parameters:
+    ///   - items: Исходный массив товаров
+    ///   - option: Критерий сортировки
+    /// - Returns: Отсортированный массив
+    private func sortedItems(_ items: [CartItem], by option: CartSortOption) -> [CartItem] {
+        switch option {
+        case .price:
+            return items.sorted { $0.price < $1.price }
+            
+        case .rating:
+            return items.sorted { $0.rating > $1.rating }
+            
+        case .name:
+            return items.sorted {
+                $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending
+            }
         }
     }
 }
