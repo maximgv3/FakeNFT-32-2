@@ -120,7 +120,7 @@ struct ProfileView: View {
 
     private var profileHeader: some View {
         VStack(alignment: .leading, spacing: .zero) {
-            HStack(alignment: .center) {
+            HStack {
                 avatar
                 Text(profileName)
                     .font(.system(size: 22, weight: .bold))
