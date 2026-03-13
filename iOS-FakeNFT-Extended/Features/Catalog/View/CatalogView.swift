@@ -12,24 +12,16 @@ struct CatalogView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                LazyVStack(spacing: Constants.cellSpacing) {
-                    if let viewModel {
-                        ForEach(viewModel.collections, id: \.id) { collection in
-                            CatalogCollectionCell(
-                                name: collection.name,
-                                nftCount: collection.nftCount,
-                                coverURL: makeCoverURL(collection.cover)
-                            )
+            ZStack {
+                if let viewModel, viewModel.isLoading {
+                    ProgressView()
+                } else {
+                    collectionList
+                        .toolbar {
+                            ToolbarItem(placement: .topBarTrailing) {
+                                sortButton
+                            }
                         }
-                    }
-                }
-                .padding(.horizontal, Constants.horizontalPadding)
-                .padding(.top, Constants.topPadding)
-            }
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    sortButton
                 }
             }
             .task {
@@ -44,6 +36,24 @@ struct CatalogView: View {
     }
 
     // MARK: - Subviews
+
+    private var collectionList: some View {
+        ScrollView {
+            LazyVStack(spacing: Constants.cellSpacing) {
+                if let viewModel {
+                    ForEach(viewModel.collections, id: \.id) { collection in
+                        CatalogCollectionCell(
+                            name: collection.name,
+                            nftCount: collection.nftCount,
+                            coverURL: makeCoverURL(collection.cover)
+                        )
+                    }
+                }
+            }
+            .padding(.horizontal, Constants.horizontalPadding)
+            .padding(.top, Constants.topPadding)
+        }
+    }
 
     private var sortButton: some View {
         Button {

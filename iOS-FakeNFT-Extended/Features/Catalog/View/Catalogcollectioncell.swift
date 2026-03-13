@@ -34,7 +34,7 @@ struct CatalogCollectionCell: View {
 
     private var titleLabel: some View {
         Text("\(name) (\(nftCount))")
-            .font(.system(size: Constants.fontSize, weight: .bold))
+            .font(Font(UIFont.bodyBold))
             .foregroundStyle(Color.ypBlack)
     }
 }
@@ -46,7 +46,6 @@ private extension CatalogCollectionCell {
         static let imageHeight: CGFloat = 140
         static let cornerRadius: CGFloat = 12
         static let imageToTextSpacing: CGFloat = 4
-        static let fontSize: CGFloat = 17
     }
 }
 
