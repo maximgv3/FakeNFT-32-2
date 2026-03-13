@@ -1,23 +1,27 @@
 import SwiftUI
 
 struct CatalogView: View {
-    
-    // MARK: - State
-    
+
+    // MARK: - Properties
+
+    @Environment(ServicesAssembly.self) var servicesAssembly
+    @State private var viewModel: CatalogViewModel?
     @State private var showingSortSheet = false
-    
+
     // MARK: - Body
-    
+
     var body: some View {
         NavigationStack {
             ScrollView {
                 LazyVStack(spacing: Constants.cellSpacing) {
-                    ForEach(0..<5) { index in
-                        CatalogCollectionCell(
-                            name: "Collection \(index)",
-                            nftCount: index * 3,
-                            coverURL: nil
-                        )
+                    if let viewModel {
+                        ForEach(viewModel.collections, id: \.id) { collection in
+                            CatalogCollectionCell(
+                                name: collection.name,
+                                nftCount: collection.nftCount,
+                                coverURL: URL(string: collection.cover)
+                            )
+                        }
                     }
                 }
                 .padding(.horizontal, Constants.horizontalPadding)
@@ -28,11 +32,19 @@ struct CatalogView: View {
                     sortButton
                 }
             }
+            .task {
+                if viewModel == nil {
+                    viewModel = CatalogViewModel(
+                        catalogService: servicesAssembly.catalogService
+                    )
+                }
+                await viewModel?.loadCollections()
+            }
         }
     }
-    
+
     // MARK: - Subviews
-    
+
     private var sortButton: some View {
         Button {
             showingSortSheet = true
@@ -59,8 +71,4 @@ private extension CatalogView {
     }
 }
 
-// MARK: - Preview
 
-#Preview {
-    CatalogView()
-}
