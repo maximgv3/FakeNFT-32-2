@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4524E0992F61C51000843716 /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4524E0982F61C50A00843716 /* WebView.swift */; };
 		84DA68822F641B2A001FBB40 /* CatalogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DA68812F641B28001FBB40 /* CatalogView.swift */; };
 		84DA68842F641B87001FBB40 /* Catalogcollectioncell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DA68832F641B82001FBB40 /* Catalogcollectioncell.swift */; };
 		84DA68862F642524001FBB40 /* Nftcollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DA68852F642522001FBB40 /* Nftcollection.swift */; };
@@ -14,7 +15,6 @@
 		84DA688A2F6425B3001FBB40 /* CatalogCollectionsRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DA68892F6425B2001FBB40 /* CatalogCollectionsRequest.swift */; };
 		84DA688D2F6426A3001FBB40 /* CatalogViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DA688C2F6426A0001FBB40 /* CatalogViewModel.swift */; };
 		84DA688F2F64515A001FBB40 /* CollectionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DA688E2F645158001FBB40 /* CollectionDetailView.swift */; };
-		4524E0992F61C51000843716 /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4524E0982F61C50A00843716 /* WebView.swift */; };
 		ABC5E1D82C3204A9002B4068 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = ABC5E1D72C3204A9002B4068 /* Kingfisher */; };
 		ABC5E1E22C320535002B4068 /* ProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = ABC5E1E12C320535002B4068 /* ProgressHUD */; };
 		F1243B7C2F5C5AB20049A796 /* iOS_FakeNFT_ExtendedApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1243B482F5C59E60049A796 /* iOS_FakeNFT_ExtendedApp.swift */; };
@@ -51,6 +51,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4524E0982F61C50A00843716 /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
 		84DA68812F641B28001FBB40 /* CatalogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogView.swift; sourceTree = "<group>"; };
 		84DA68832F641B82001FBB40 /* Catalogcollectioncell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Catalogcollectioncell.swift; sourceTree = "<group>"; };
 		84DA68852F642522001FBB40 /* Nftcollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Nftcollection.swift; sourceTree = "<group>"; };
@@ -58,7 +59,6 @@
 		84DA68892F6425B2001FBB40 /* CatalogCollectionsRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogCollectionsRequest.swift; sourceTree = "<group>"; };
 		84DA688C2F6426A0001FBB40 /* CatalogViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogViewModel.swift; sourceTree = "<group>"; };
 		84DA688E2F645158001FBB40 /* CollectionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionDetailView.swift; sourceTree = "<group>"; };
-		4524E0982F61C50A00843716 /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
 		ABC5E1682C31F5AF002B4068 /* iOS-FakeNFT-Extended.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "iOS-FakeNFT-Extended.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1243B482F5C59E60049A796 /* iOS_FakeNFT_ExtendedApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOS_FakeNFT_ExtendedApp.swift; sourceTree = "<group>"; };
 		F1243B492F5C59E60049A796 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -582,6 +582,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = NO;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -610,6 +611,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = NO;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
