@@ -1,4 +1,5 @@
 import SwiftUI
+import Kingfisher
 
 struct CatalogCollectionCell: View {
 
@@ -20,14 +21,20 @@ struct CatalogCollectionCell: View {
     // MARK: - Subviews
 
     private var coverImage: some View {
-        RoundedRectangle(cornerRadius: Constants.cornerRadius)
-            .fill(Color.ypLightGrey)
+        KFImage(coverURL)
+            .placeholder {
+                RoundedRectangle(cornerRadius: Constants.cornerRadius)
+                    .fill(Color.ypLightGrey)
+            }
+            .resizable()
+            .scaledToFill()
             .frame(height: Constants.imageHeight)
+            .clipShape(RoundedRectangle(cornerRadius: Constants.cornerRadius))
     }
 
     private var titleLabel: some View {
         Text("\(name) (\(nftCount))")
-            .font(.system(size: 17, weight: .bold))
+            .font(.system(size: Constants.fontSize, weight: .bold))
             .foregroundStyle(Color.ypBlack)
     }
 }
@@ -39,6 +46,7 @@ private extension CatalogCollectionCell {
         static let imageHeight: CGFloat = 140
         static let cornerRadius: CGFloat = 12
         static let imageToTextSpacing: CGFloat = 4
+        static let fontSize: CGFloat = 17
     }
 }
 

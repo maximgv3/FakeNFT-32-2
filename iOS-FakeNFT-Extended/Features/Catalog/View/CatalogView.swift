@@ -19,7 +19,7 @@ struct CatalogView: View {
                             CatalogCollectionCell(
                                 name: collection.name,
                                 nftCount: collection.nftCount,
-                                coverURL: URL(string: collection.cover)
+                                coverURL: makeCoverURL(collection.cover)
                             )
                         }
                     }
@@ -58,6 +58,15 @@ struct CatalogView: View {
                 .foregroundStyle(Color.ypBlack)
         }
     }
+
+    // MARK: - Private
+
+    private func makeCoverURL(_ urlString: String) -> URL? {
+        let encoded = urlString.addingPercentEncoding(
+            withAllowedCharacters: .urlQueryAllowed
+        )
+        return URL(string: encoded ?? urlString)
+    }
 }
 
 // MARK: - Constants
@@ -70,5 +79,3 @@ private extension CatalogView {
         static let cellSpacing: CGFloat = 21
     }
 }
-
-
