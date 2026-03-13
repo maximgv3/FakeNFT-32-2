@@ -8,6 +8,7 @@ final class CatalogViewModel {
 
     var collections: [NftCollection] = []
     var isLoading = false
+    var showError = false
 
     private let catalogService: CatalogService
 
@@ -24,7 +25,7 @@ final class CatalogViewModel {
         do {
             collections = try await catalogService.loadCollections()
         } catch {
-            print("Failed to load collections: \(error)")
+            showError = true
         }
         isLoading = false
     }

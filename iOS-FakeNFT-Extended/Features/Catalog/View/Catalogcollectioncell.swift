@@ -16,6 +16,7 @@ struct CatalogCollectionCell: View {
             coverImage
             titleLabel
         }
+        .contentShape(Rectangle())
     }
 
     // MARK: - Subviews
@@ -29,11 +30,12 @@ struct CatalogCollectionCell: View {
             .resizable()
             .scaledToFill()
             .frame(height: Constants.imageHeight)
+            .clipped()
             .clipShape(RoundedRectangle(cornerRadius: Constants.cornerRadius))
     }
 
     private var titleLabel: some View {
-        Text("\(name) (\(nftCount))")
+        Text("\(name.capitalized) (\(nftCount))")
             .font(Font(UIFont.bodyBold))
             .foregroundStyle(Color.ypBlack)
     }

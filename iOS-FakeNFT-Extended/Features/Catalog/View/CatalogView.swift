@@ -32,6 +32,21 @@ struct CatalogView: View {
                 }
                 await viewModel?.loadCollections()
             }
+            .alert(
+                NSLocalizedString("Error.title", comment: ""),
+                isPresented: Binding(
+                    get: { viewModel?.showError ?? false },
+                    set: { viewModel?.showError = $0 }
+                )
+            ) {
+                Button(NSLocalizedString("Error.repeat", comment: "")) {
+                    Task {
+                        await viewModel?.loadCollections()
+                    }
+                }
+            } message: {
+                Text(NSLocalizedString("Error.network", comment: ""))
+            }
         }
     }
 
@@ -42,11 +57,14 @@ struct CatalogView: View {
             LazyVStack(spacing: Constants.cellSpacing) {
                 if let viewModel {
                     ForEach(viewModel.collections, id: \.id) { collection in
-                        CatalogCollectionCell(
-                            name: collection.name,
-                            nftCount: collection.nftCount,
-                            coverURL: makeCoverURL(collection.cover)
-                        )
+                        NavigationLink(destination: CollectionDetailView(collection: collection)) {
+                            CatalogCollectionCell(
+                                name: collection.name,
+                                nftCount: collection.nftCount,
+                                coverURL: makeCoverURL(collection.cover)
+                            )
+                        }
+                        .buttonStyle(.plain)
                     }
                 }
             }
