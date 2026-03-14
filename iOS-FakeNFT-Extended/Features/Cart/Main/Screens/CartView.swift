@@ -63,8 +63,7 @@ struct CartView: View {
     // MARK: - Views
     
     private var loadingView: some View {
-        ProgressView()
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        SkeletonCartView()
     }
     
     private var emptyView: some View {

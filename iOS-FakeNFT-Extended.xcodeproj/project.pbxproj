@@ -57,6 +57,7 @@
 		F17CCB9B2F61945F0069C181 /* MockCartService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F17CCB9A2F61945F0069C181 /* MockCartService.swift */; };
 		F17CCB9D2F61B3660069C181 /* CartSortOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = F17CCB9C2F61B3660069C181 /* CartSortOption.swift */; };
 		F17CCBA82F62F8880069C181 /* RatingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F17CCBA72F62F8880069C181 /* RatingView.swift */; };
+		F17CCBAA2F6579CD0069C181 /* SkeletonCartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F17CCBA92F6579CD0069C181 /* SkeletonCartView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -110,6 +111,7 @@
 		F17CCB9C2F61B3660069C181 /* CartSortOption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartSortOption.swift; sourceTree = "<group>"; };
 		F17CCB9F2F62C5E30069C181 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		F17CCBA72F62F8880069C181 /* RatingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingView.swift; sourceTree = "<group>"; };
+		F17CCBA92F6579CD0069C181 /* SkeletonCartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkeletonCartView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -343,6 +345,7 @@
 				F1243BC92F5EC5BB0049A796 /* CartListView.swift */,
 				F1243BCA2F5EC5BB0049A796 /* CartFooterView.swift */,
 				F17CCBA72F62F8880069C181 /* RatingView.swift */,
+				F17CCBA92F6579CD0069C181 /* SkeletonCartView.swift */,
 			);
 			path = UIComponents;
 			sourceTree = "<group>";
@@ -541,6 +544,7 @@
 				F1243B972F5C5B3F0049A796 /* NftImageCollectionViewCell.swift in Sources */,
 				F17CCB922F618FA50069C181 /* Order.swift in Sources */,
 				F1243B872F5C5AF20049A796 /* CellsReusingUtils.swift in Sources */,
+				F17CCBAA2F6579CD0069C181 /* SkeletonCartView.swift in Sources */,
 				F1243B8D2F5C5B0B0049A796 /* Nft.swift in Sources */,
 				F1243B8B2F5C5B030049A796 /* ErrorView.swift in Sources */,
 				F1243B932F5C5B2D0049A796 /* NftDetailPresenter.swift in Sources */,
