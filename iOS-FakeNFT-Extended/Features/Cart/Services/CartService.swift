@@ -7,6 +7,6 @@
 
 import Foundation
 
-protocol CartServiceProtocol {
+protocol CartServiceProtocol: Sendable {
     func loadCartItems() async throws -> [CartItem]
 }

@@ -35,7 +35,7 @@ final class CartViewModel {
     var errorMessage: String?
     
     /// Текущий выбранный способ сортировки
-    var selectedSort: CartSortOption = .price
+    var selectedSort: CartSortOption = .name
     
     // MARK: - Private Properties
     

@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class MockCartService: CartServiceProtocol {
+actor MockCartService: CartServiceProtocol {
     func loadCartItems() async throws -> [CartItem] {
         CartItem.mockItems
     }

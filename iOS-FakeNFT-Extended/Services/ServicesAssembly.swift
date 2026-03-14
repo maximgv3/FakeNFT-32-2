@@ -4,8 +4,10 @@ import Foundation
 @MainActor
 final class ServicesAssembly {
     
-    private let networkClient: NetworkClient
-    private let nftStorage: NftStorage
+    let networkClient: NetworkClient
+    let nftStorage: NftStorage
+    let nftService: NftService
+    let cartService: CartServiceProtocol
     
     init(
         networkClient: NetworkClient,
@@ -13,17 +15,14 @@ final class ServicesAssembly {
     ) {
         self.networkClient = networkClient
         self.nftStorage = nftStorage
-    }
-    
-    var nftService: NftService {
-        NftServiceImpl(
+        
+        let nftService = NftServiceImpl(
             networkClient: networkClient,
             storage: nftStorage
         )
-    }
-    
-    var cartService: CartServiceProtocol {
-        CartServiceImpl(
+        self.nftService = nftService
+        
+        self.cartService = CartServiceImpl(
             networkClient: networkClient,
             nftService: nftService
         )
