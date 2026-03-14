@@ -31,12 +31,15 @@ actor DefaultNetworkClient: NetworkClient {
     func send(request: NetworkRequest) async throws -> Data {
         let urlRequest = try create(request: request)
         let (data, response) = try await session.data(for: urlRequest)
+
         guard let response = response as? HTTPURLResponse else {
             throw NetworkClientError.urlSessionError
         }
+
         guard 200 ..< 300 ~= response.statusCode else {
             throw NetworkClientError.httpStatusCode(response.statusCode)
         }
+
         return data
     }
 
@@ -55,12 +58,26 @@ actor DefaultNetworkClient: NetworkClient {
         var urlRequest = URLRequest(url: endpoint)
         urlRequest.httpMethod = request.httpMethod.rawValue
 
-        if let dto = request.dto,
-           let dtoEncoded = try? encoder.encode(dto) {
+        if let updateOrderRequest = request as? UpdateOrderRequest {
+            let bodyString = updateOrderRequest.nfts
+                .map { nft in
+                    let encodedValue = nft.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? nft
+                    return "nfts=\(encodedValue)"
+                }
+                .joined(separator: "&")
+
+            urlRequest.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+            urlRequest.httpBody = bodyString.data(using: .utf8)
+        } else if let dto = request.dto,
+                  let dtoEncoded = try? encoder.encode(dto) {
             urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
             urlRequest.httpBody = dtoEncoded
         }
-        urlRequest.addValue(RequestConstants.token, forHTTPHeaderField: "X-Practicum-Mobile-Token")
+
+        urlRequest.addValue(
+            RequestConstants.token,
+            forHTTPHeaderField: "X-Practicum-Mobile-Token"
+        )
 
         return urlRequest
     }

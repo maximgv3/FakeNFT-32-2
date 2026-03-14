@@ -7,8 +7,20 @@
 
 import Foundation
 
-final class MockCartService: CartServiceProtocol {
+actor MockCartService: CartServiceProtocol {
+    private var items = CartItem.mockItems
+
     func loadCartItems() async throws -> [CartItem] {
-        CartItem.mockItems
+        items
+    }
+
+    func removeItem(id: String) async throws -> [CartItem] {
+        try await Task.sleep(nanoseconds: 500_000_000)
+
+        if let index = items.firstIndex(where: { $0.id == id }) {
+            items.remove(at: index)
+        }
+
+        return items
     }
 }
