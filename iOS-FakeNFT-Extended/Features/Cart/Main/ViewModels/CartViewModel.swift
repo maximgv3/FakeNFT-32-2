@@ -37,6 +37,12 @@ final class CartViewModel {
     /// Текущий выбранный способ сортировки
     var selectedSort: CartSortOption = .name
     
+    /// Товар, ожидающий подтверждения удаления
+    var itemPendingRemoval: CartItem?
+    
+    /// Флаг процесса удаления
+    var isDeleting = false
+    
     // MARK: - Private Properties
     
     private let cartService: CartServiceProtocol
@@ -121,6 +127,38 @@ final class CartViewModel {
             errorMessage = nil
         } catch {
             print("Cart refresh error: \(error)")
+        }
+    }
+    
+    /// Обработчик нажатия на кнопку удаления
+    /// - Parameter item: Товар для удаления
+    @MainActor
+    func didTapRemove(on item: CartItem) {
+        itemPendingRemoval = item
+    }
+    
+    /// Отмена удаления
+    @MainActor
+    func cancelRemoval() {
+        itemPendingRemoval = nil
+    }
+    
+    /// Подтверждение удаления
+    @MainActor
+    func confirmRemoval() async {
+        guard let item = itemPendingRemoval else { return }
+        
+        isDeleting = true
+        
+        defer { isDeleting = false }
+        
+        do {
+            let updatedItems = try await cartService.removeItem(id: item.id)
+            items = sortedItems(updatedItems, by: selectedSort)
+            itemPendingRemoval = nil
+        } catch {
+            errorMessage = "Не удалось удалить товар"
+            print("Cart remove error: \(error)")
         }
     }
     

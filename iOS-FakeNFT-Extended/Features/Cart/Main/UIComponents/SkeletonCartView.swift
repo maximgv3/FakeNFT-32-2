@@ -76,10 +76,7 @@ struct SkeletonFooterView: View {
 
                 HStack(spacing: 0) {
                     SkeletonBlock(cornerRadius: 4)
-                        .frame(width: 50, height: 22)
-
-                    SkeletonBlock(cornerRadius: 4)
-                        .frame(width: 30, height: 22)
+                        .frame(width: 80, height: 22)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)

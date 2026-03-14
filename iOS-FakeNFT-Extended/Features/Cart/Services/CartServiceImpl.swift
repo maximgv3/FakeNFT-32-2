@@ -47,6 +47,45 @@ actor CartServiceImpl: CartServiceProtocol {
         }
     }
     
+    func removeItem(id: String) async throws -> [CartItem] {
+            let order: Order = try await networkClient.send(request: OrderRequest())
+
+            var updatedIds = order.nfts
+            if let index = updatedIds.firstIndex(of: id) {
+                updatedIds.remove(at: index)
+            }
+
+            let updatedOrder: Order = try await networkClient.send(
+                request: UpdateOrderRequest(nfts: updatedIds)
+            )
+
+            return try await makeCartItems(from: updatedOrder.nfts)
+        }
+    
+    private func makeCartItems(from ids: [String]) async throws -> [CartItem] {
+            guard !ids.isEmpty else { return [] }
+
+            return try await withThrowingTaskGroup(of: (Int, CartItem).self) { group in
+                for (index, nftId) in ids.enumerated() {
+                    group.addTask { [nftService] in
+                        let nft = try await nftService.loadNft(id: nftId)
+                        return (index, Self.makeCartItem(from: nft))
+                    }
+                }
+
+                var indexedItems: [(Int, CartItem)] = []
+                indexedItems.reserveCapacity(ids.count)
+
+                for try await indexedItem in group {
+                    indexedItems.append(indexedItem)
+                }
+
+                return indexedItems
+                    .sorted { $0.0 < $1.0 }
+                    .map(\.1)
+            }
+        }
+    
     private static func makeCartItem(from nft: Nft) -> CartItem {
         CartItem(
             id: nft.id,

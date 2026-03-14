@@ -7,17 +7,32 @@
 
 import SwiftUI
 
+// MARK: - CartListView
+
 struct CartListView: View {
+    
+    // MARK: - Properties
+    
+    /// Список товаров для отображения
     let items: [CartItem]
+    
+    /// Действие при нажатии на кнопку удаления
     let onRemove: (CartItem) -> Void
+    
+    /// Действие при обновлении списка (pull-to-refresh)
     let onRefresh: () async -> Void
+    
+    // MARK: - Body
     
     var body: some View {
         List {
             ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
-                CartCell(cartItem: item) {
-                    onRemove(item)
-                }
+                CartCell(
+                    cartItem: item,
+                    removeAction: {
+                        onRemove(item)
+                    }
+                )
                 .listRowSeparator(.hidden)
                 .listRowInsets(
                     EdgeInsets(
@@ -38,6 +53,8 @@ struct CartListView: View {
         }
     }
 }
+
+// MARK: - Preview
 
 #Preview {
     CartListView(

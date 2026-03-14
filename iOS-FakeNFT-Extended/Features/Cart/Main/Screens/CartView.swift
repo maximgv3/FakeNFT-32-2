@@ -28,26 +28,64 @@ struct CartView: View {
         viewModel.items.map(\.price).reduce(0, +)
     }
     
+    private var isDeleteConfirmationPresented: Bool {
+        viewModel.itemPendingRemoval != nil
+    }
+    
     // MARK: - Body
     
     var body: some View {
-        Group {
-            switch viewModel.state {
-            case .loading:
-                loadingView
+        ZStack {
+            Group {
+                switch viewModel.state {
+                case .loading:
+                    loadingView
+                    
+                case .empty:
+                    emptyView
+                    
+                case .success:
+                    contentView
+                    
+                case .error(let message):
+                    errorView(message)
+                }
+            }
+            
+            if let item = viewModel.itemPendingRemoval {
+                Rectangle()
+                    .fill(.ultraThinMaterial)
+                    .ignoresSafeArea()
+                    .overlay(
+                        Color.black.opacity(0.16)
+                    )
+                    .transition(.opacity)
                 
-            case .empty:
-                emptyView
-                
-            case .success:
-                contentView
-                
-            case .error(let message):
-                errorView(message)
+                DeleteCartItemView(
+                    item: item,
+                    isDeleting: viewModel.isDeleting,
+                    onDelete: {
+                        Task {
+                            await viewModel.confirmRemoval()
+                        }
+                    },
+                    onCancel: {
+                        viewModel.cancelRemoval()
+                    }
+                )
+                .transition(.scale(scale: 0.96).combined(with: .opacity))
+                .zIndex(1)
             }
         }
+        .animation(.easeInOut(duration: 0.2), value: isDeleteConfirmationPresented)
         .background(backgroundView, ignoresSafeAreaEdges: .all)
-        .toolbar { sortToolbar }
+        .toolbar(isDeleteConfirmationPresented ? .hidden : .visible, for: .navigationBar)
+        .toolbar(isDeleteConfirmationPresented ? .hidden : .visible, for: .tabBar)
+        .toolbar {
+            if !isDeleteConfirmationPresented {
+                sortToolbar
+            }
+        }
         .confirmationDialog(
             "Сортировка",
             isPresented: $isSortDialogPresented,
@@ -73,13 +111,17 @@ struct CartView: View {
     private var contentView: some View {
         CartListView(
             items: viewModel.items,
-            onRemove: { _ in },
+            onRemove: { item in
+                viewModel.didTapRemove(on: item)
+            },
             onRefresh: {
                 await viewModel.refresh()
             }
         )
         .safeAreaInset(edge: .bottom) {
-            footerView
+            if !isDeleteConfirmationPresented {
+                footerView
+            }
         }
     }
     
@@ -152,5 +194,14 @@ struct CartView: View {
         CartView(
             viewModel: CartViewModel(cartService: MockCartService())
         )
+    }
+}
+
+#Preview("Delete Confirmation") {
+    let viewModel = CartViewModel(cartService: MockCartService())
+    viewModel.itemPendingRemoval = .mock1
+    
+    return NavigationStack {
+        CartView(viewModel: viewModel)
     }
 }
