@@ -6,28 +6,35 @@ struct TabBarView: View {
     
     var body: some View {
         TabView(selection: $selectedTab) {
-            Color.blue
-                .overlay(Text("Профиль").foregroundColor(.white))
-                .tabItem {
-                    VStack {
-                        Image("profile")
-                            .renderingMode(.template)
-                        Text("Профиль")
-                    }
+            // Профиль
+            NavigationStack {
+                Color.blue
+                    .overlay(Text("Профиль").foregroundColor(.white))
+            }
+            .tabItem {
+                VStack {
+                    Image("profile")
+                        .renderingMode(.template)
+                    Text("Профиль")
                 }
-                .tag(0)
+            }
+            .tag(0)
             
-            Color.green
-                .overlay(Text("Каталог").foregroundColor(.white))
-                .tabItem {
-                    VStack {
-                        Image("catalog")
-                            .renderingMode(.template)
-                        Text("Каталог")
-                    }
+            // Каталог
+            NavigationStack {
+                Color.green
+                    .overlay(Text("Каталог").foregroundColor(.white))
+            }
+            .tabItem {
+                VStack {
+                    Image("catalog")
+                        .renderingMode(.template)
+                    Text("Каталог")
                 }
-                .tag(1)
+            }
+            .tag(1)
             
+            // Корзина
             NavigationStack {
                 CartView(
                     viewModel: CartViewModel(
@@ -44,16 +51,19 @@ struct TabBarView: View {
             }
             .tag(2)
             
-            Color.orange
-                .overlay(Text("Статистика").foregroundColor(.white))
-                .tabItem {
-                    VStack {
-                        Image("statistic")
-                            .renderingMode(.template)
-                        Text("Статистика")
-                    }
+            // Статистика
+            NavigationStack {
+                Color.orange
+                    .overlay(Text("Статистика").foregroundColor(.white))
+            }
+            .tabItem {
+                VStack {
+                    Image("statistic")
+                        .renderingMode(.template)
+                    Text("Статистика")
                 }
-                .tag(3)
+            }
+            .tag(3)
         }
         .tint(.ypUBlue)
     }

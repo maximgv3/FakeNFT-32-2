@@ -15,6 +15,7 @@ struct CartView: View {
     
     @State private var viewModel: CartViewModel
     @State private var isSortDialogPresented = false
+    @State private var showPayment = false
     
     // MARK: - Init
     
@@ -78,9 +79,8 @@ struct CartView: View {
             }
         }
         .animation(.easeInOut(duration: 0.2), value: isDeleteConfirmationPresented)
-        .background(backgroundView, ignoresSafeAreaEdges: .all)
+        .background(backgroundView.ignoresSafeArea())
         .toolbar(isDeleteConfirmationPresented ? .hidden : .visible, for: .navigationBar)
-        .toolbar(isDeleteConfirmationPresented ? .hidden : .visible, for: .tabBar)
         .toolbar {
             if !isDeleteConfirmationPresented {
                 sortToolbar
@@ -92,6 +92,11 @@ struct CartView: View {
             titleVisibility: .visible
         ) {
             sortDialog
+        }
+        .navigationDestination(isPresented: $showPayment) {
+            PaymentView()
+                .toolbar(.hidden, for: .tabBar)
+                .toolbarBackground(.hidden, for: .tabBar)
         }
         .task {
             await viewModel.load()
@@ -144,7 +149,7 @@ struct CartView: View {
         CartFooterView(
             totalCount: viewModel.items.count,
             totalPrice: total,
-            payAction: { }
+            payAction: { showPayment = true }
         )
     }
     
