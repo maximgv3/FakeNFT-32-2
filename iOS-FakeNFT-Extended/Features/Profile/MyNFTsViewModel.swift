@@ -3,17 +3,28 @@ import Observation
 
 @Observable
 final class MyNFTsViewModel {
-    enum SortOption {
+    enum SortOption: String {
         case price
         case rating
         case name
     }
 
+    private let sortOptionKey = "myNFTs.sortOption"
+
     var nfts: [Nft] = Nft.mocks
-    var selectedSort: SortOption = .price
+    var selectedSort: SortOption
 
     var isEmpty: Bool {
         nfts.isEmpty
+    }
+
+    init() {
+        if let savedValue = UserDefaults.standard.string(forKey: sortOptionKey),
+           let savedSort = SortOption(rawValue: savedValue) {
+            selectedSort = savedSort
+        } else {
+            selectedSort = .price
+        }
     }
 
     var sortedNfts: [Nft] {
@@ -29,5 +40,6 @@ final class MyNFTsViewModel {
 
     func setSort(_ option: SortOption) {
         selectedSort = option
+        UserDefaults.standard.set(option.rawValue, forKey: sortOptionKey)
     }
 }
