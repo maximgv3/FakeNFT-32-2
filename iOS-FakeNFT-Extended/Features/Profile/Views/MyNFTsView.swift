@@ -2,14 +2,14 @@ import SwiftUI
 
 struct MyNFTsView: View {
 
-    var nfts = Nft.mocks
-
-    private var isEmpty: Bool { nfts.isEmpty }
-
+    private var viewModel = MyNFTsViewModel()
+    
+    @State private var isSortDialogPresented = false
+    
     var body: some View {
         ZStack {
             backgroundView
-            if isEmpty {
+            if viewModel.isEmpty {
                 emptyNftsText
             } else {
                 nftListView
@@ -20,11 +20,25 @@ struct MyNFTsView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
+                    isSortDialogPresented = true
                 } label: {
                     Image("sort")
                         .font(.system(size: 24, weight: .regular))
                         .foregroundStyle(.ypBlack)
                 }
+            }
+        }
+        .confirmationDialog("Сортировка", isPresented: $isSortDialogPresented, titleVisibility: .visible) {
+            Button("По цене") {
+                viewModel.setSort(.price)
+            }
+            Button("По рейтингу") {
+                viewModel.setSort(.rating)
+            }
+            Button("По названию") {
+                viewModel.setSort(.name)
+            }
+            Button("Закрыть", role: .cancel) {
             }
         }
     }
@@ -42,7 +56,7 @@ struct MyNFTsView: View {
     }
 
     private var nftListView: some View {
-        List(nfts) { nft in
+        List(viewModel.sortedNfts) { nft in
             nftRow(for: nft)
                 .listRowInsets(
                     EdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 39)

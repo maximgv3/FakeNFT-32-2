@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		45122ABA2F69E402002628EC /* MyNFTsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45122AB92F69E3FE002628EC /* MyNFTsViewModel.swift */; };
 		45168AD52F618BAB00CACD7B /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45168AD42F618BA500CACD7B /* ProfileView.swift */; };
 		4524E0932F61BCA600843716 /* MyNFTsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4524E0922F61BC9D00843716 /* MyNFTsView.swift */; };
 		4524E0952F61BCB100843716 /* FavouriteNFTsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4524E0942F61BCAA00843716 /* FavouriteNFTsView.swift */; };
@@ -55,6 +56,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		45122AB92F69E3FE002628EC /* MyNFTsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyNFTsViewModel.swift; sourceTree = "<group>"; };
 		45168AD42F618BA500CACD7B /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		4524E0922F61BC9D00843716 /* MyNFTsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyNFTsView.swift; sourceTree = "<group>"; };
 		4524E0942F61BCAA00843716 /* FavouriteNFTsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavouriteNFTsView.swift; sourceTree = "<group>"; };
@@ -118,6 +120,7 @@
 			isa = PBXGroup;
 			children = (
 				4524E0A32F61EB2400843716 /* ProfileViewModel.swift */,
+				45122AB92F69E3FE002628EC /* MyNFTsViewModel.swift */,
 				45168AD32F618BA100CACD7B /* Views */,
 			);
 			path = Profile;
@@ -449,6 +452,7 @@
 				4524E0A12F61E8BA00843716 /* ProfileService.swift in Sources */,
 				4524E09F2F61E84200843716 /* ProfileRequest.swift in Sources */,
 				F1243B8B2F5C5B030049A796 /* ErrorView.swift in Sources */,
+				45122ABA2F69E402002628EC /* MyNFTsViewModel.swift in Sources */,
 				F1243B932F5C5B2D0049A796 /* NftDetailPresenter.swift in Sources */,
 				F1243B8E2F5C5B100049A796 /* NftService.swift in Sources */,
 			);
