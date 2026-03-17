@@ -6,13 +6,12 @@
 //
 
 import Foundation
-import SwiftUI
 
-struct PaymentMethod: Identifiable, Hashable {
+struct PaymentMethod: Identifiable, Hashable, Codable {
     let id: String
     let title: String
     let code: String
-    let image: Image
+    let imageName: String
     
     // Для Hashable
     static func == (lhs: PaymentMethod, rhs: PaymentMethod) -> Bool {

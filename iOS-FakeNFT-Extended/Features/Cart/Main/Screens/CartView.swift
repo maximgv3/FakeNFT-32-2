@@ -80,7 +80,7 @@ struct CartView: View {
         }
         .animation(.easeInOut(duration: 0.2), value: isDeleteConfirmationPresented)
         .background(backgroundView.ignoresSafeArea())
-        .toolbar(isDeleteConfirmationPresented ? .hidden : .visible, for: .navigationBar)
+        .applyBarsVisibility(hidden: isDeleteConfirmationPresented)
         .toolbar {
             if !isDeleteConfirmationPresented {
                 sortToolbar
@@ -189,6 +189,26 @@ struct CartView: View {
             
             Button("Закрыть", role: .cancel) { }
         }
+    }
+}
+
+// MARK: - ViewModifier для управления видимостью баров
+
+struct BarsVisibilityModifier: ViewModifier {
+    let hidden: Bool
+    
+    func body(content: Content) -> some View {
+        content
+            .toolbar(hidden ? .hidden : .visible, for: .navigationBar)
+            .toolbar(hidden ? .hidden : .visible, for: .tabBar)
+    }
+}
+
+// MARK: - View Extension
+
+extension View {
+    func applyBarsVisibility(hidden: Bool) -> some View {
+        modifier(BarsVisibilityModifier(hidden: hidden))
     }
 }
 

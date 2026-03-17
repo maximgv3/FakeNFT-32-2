@@ -32,7 +32,7 @@ struct PaymentMethodCell: View {
     // MARK: - Private Views
     
     private var methodImage: some View {
-        method.image
+        Image(method.imageName)  // Загружаем по имени ассета
             .resizable()
             .scaledToFill()
             .frame(width: 36, height: 36)
@@ -70,7 +70,7 @@ struct PaymentMethodCell: View {
                 id: "1",
                 title: "Bitcoin",
                 code: "BTC",
-                image: Image("BTC")
+                imageName: "BTC"
             ),
             isSelected: false
         )
@@ -80,7 +80,7 @@ struct PaymentMethodCell: View {
                 id: "2",
                 title: "Ethereum",
                 code: "ETH",
-                image: Image("ETH")
+                imageName: "ETH"
             ),
             isSelected: true
         )

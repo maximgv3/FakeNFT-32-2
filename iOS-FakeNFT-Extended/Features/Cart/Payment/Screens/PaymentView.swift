@@ -24,49 +24,49 @@ struct PaymentView: View {
             id: "1",
             title: "Bitcoin",
             code: "BTC",
-            image: Image("BTC")
+            imageName: "BTC"
         ),
         PaymentMethod(
             id: "2",
             title: "Dogecoin",
             code: "DOGE",
-            image: Image("DOGE")
+            imageName: "DOGE"
         ),
         PaymentMethod(
             id: "3",
             title: "Tether",
             code: "USDT",
-            image: Image("USDT")
+            imageName: "USDT"
         ),
         PaymentMethod(
             id: "4",
             title: "Apecoin",
             code: "APE",
-            image: Image("APE")
+            imageName: "APE"
         ),
         PaymentMethod(
             id: "5",
             title: "Solana",
             code: "SOL",
-            image: Image("SOL")
+            imageName: "SOL"
         ),
         PaymentMethod(
             id: "6",
             title: "Ethereum",
             code: "ETH",
-            image: Image("ETH")
+            imageName: "ETH"
         ),
         PaymentMethod(
             id: "7",
             title: "Cardano",
             code: "ADA",
-            image: Image("ADA")
+            imageName: "ADA"
         ),
         PaymentMethod(
             id: "8",
             title: "Shiba Inu",
             code: "SHIB",
-            image: Image("SHIB")
+            imageName: "SHIB"
         )
     ]
     
