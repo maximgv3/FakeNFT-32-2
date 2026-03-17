@@ -4,21 +4,37 @@ struct MyNFTsView: View {
 
     var nfts = Nft.mocks
 
+    private var isEmpty: Bool { nfts.isEmpty }
+
     var body: some View {
         ZStack {
             backgroundView
-            nftListView
+            if isEmpty {
+                emptyNftsText
+            } else {
+                nftListView
+            }
         }
     }
 
     private var backgroundView: some View {
         Color.ypWhite
+            .ignoresSafeArea()
+    }
+
+    private var emptyNftsText: some View {
+        Text("У Вас ещё нет NFT")
+            .font(.system(size: 17, weight: .bold))
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+            .multilineTextAlignment(.center)
     }
 
     private var nftListView: some View {
         List(nfts) { nft in
             nftRow(for: nft)
-                .listRowInsets(EdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 39))
+                .listRowInsets(
+                    EdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 39)
+                )
                 .listRowSeparator(.hidden)
         }
         .listStyle(.plain)
