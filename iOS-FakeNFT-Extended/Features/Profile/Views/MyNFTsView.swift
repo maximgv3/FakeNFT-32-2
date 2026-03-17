@@ -15,6 +15,18 @@ struct MyNFTsView: View {
                 nftListView
             }
         }
+        .navigationTitle("Мои NFT")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                } label: {
+                    Image("sort")
+                        .font(.system(size: 24, weight: .regular))
+                        .foregroundStyle(.ypBlack)
+                }
+            }
+        }
     }
 
     private var backgroundView: some View {
@@ -36,6 +48,7 @@ struct MyNFTsView: View {
                     EdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 39)
                 )
                 .listRowSeparator(.hidden)
+                .listRowBackground(Color.clear)
         }
         .listStyle(.plain)
         .padding(.top, 20)
@@ -79,5 +92,7 @@ struct MyNFTsView: View {
 }
 
 #Preview {
-    MyNFTsView()
+    NavigationStack {
+        MyNFTsView()
+    }
 }
