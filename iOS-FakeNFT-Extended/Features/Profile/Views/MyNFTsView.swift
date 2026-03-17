@@ -2,15 +2,23 @@ import SwiftUI
 
 struct MyNFTsView: View {
 
-    private var viewModel = MyNFTsViewModel()
-    
+    @State private var viewModel: MyNFTsViewModel
     @State private var isSortDialogPresented = false
+
+    init(nftIds: [String], nftService: NftService) {
+        _viewModel = State(initialValue: MyNFTsViewModel(nftService: nftService, nftIds: nftIds))
+    }
     
     var body: some View {
         ZStack {
             backgroundView
-            if viewModel.isEmpty {
-                emptyNftsText
+            if viewModel.isLoading {
+                loadingView
+            } else if let errorMessage = viewModel.errorMessage,
+                      !errorMessage.isEmpty {
+                emptyStateView(message: errorMessage)
+            } else if viewModel.isEmpty {
+                emptyStateView(message: "У Вас ещё нет NFT")
             } else {
                 nftListView
             }
@@ -41,6 +49,9 @@ struct MyNFTsView: View {
             Button("Закрыть", role: .cancel) {
             }
         }
+        .task {
+            await viewModel.loadNFTs()
+        }
     }
 
     private var backgroundView: some View {
@@ -48,9 +59,15 @@ struct MyNFTsView: View {
             .ignoresSafeArea()
     }
 
-    private var emptyNftsText: some View {
-        Text("У Вас ещё нет NFT")
+    private var loadingView: some View {
+        ProgressView()
+            .tint(.ypBlack)
+    }
+
+    private func emptyStateView(message: String) -> some View {
+        Text(message)
             .font(.system(size: 17, weight: .bold))
+            .foregroundStyle(.ypBlack)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
             .multilineTextAlignment(.center)
     }
@@ -76,8 +93,41 @@ struct MyNFTsView: View {
     }
 
     private func nftImageView(for nft: Nft) -> some View {
-        Image(nft.images.first!)
-            .frame(width: 108, height: 108)
+        Group {
+            if let imageString = nft.images.first,
+               let imageURL = URL(string: imageString) {
+                AsyncImage(url: imageURL) { phase in
+                    switch phase {
+                    case .empty:
+                        ZStack {
+                            Color.ypLightGrey
+                            ProgressView()
+                                .tint(.ypBlack)
+                        }
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .scaledToFill()
+                    case .failure:
+                        nftImagePlaceholder
+                    @unknown default:
+                        nftImagePlaceholder
+                    }
+                }
+            } else {
+                nftImagePlaceholder
+            }
+        }
+        .frame(width: 108, height: 108)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+    }
+
+    private var nftImagePlaceholder: some View {
+        Color.ypLightGrey
+            .overlay {
+                Image(systemName: "photo")
+                    .foregroundStyle(.ypBlack)
+            }
     }
 
     private func nftInfoView(for nft: Nft) -> some View {
@@ -103,10 +153,4 @@ struct MyNFTsView: View {
         }
     }
 
-}
-
-#Preview {
-    NavigationStack {
-        MyNFTsView()
-    }
 }

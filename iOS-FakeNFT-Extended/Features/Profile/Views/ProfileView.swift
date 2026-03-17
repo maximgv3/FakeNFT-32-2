@@ -33,7 +33,10 @@ struct ProfileView: View {
                 case .edit:
                     ProfileEditView()
                 case .myNFTs:
-                    MyNFTsView()
+                    MyNFTsView(
+                        nftIds: viewModel?.profile?.nfts ?? [],
+                        nftService: servicesAssembly.nftService
+                    )
                 case .favoriteNFTs:
                     FavouriteNFTsView()
                 case .webView:

@@ -9,21 +9,29 @@ final class MyNFTsViewModel {
         case name
     }
 
+    private let nftService: NftService
+    private let nftIds: [String]
+    var isLoading = false
+    var errorMessage: String?
+    
+    
     private let sortOptionKey = "myNFTs.sortOption"
 
-    var nfts: [Nft] = Nft.mocks
+    var nfts: [Nft] = []
     var selectedSort: SortOption
 
     var isEmpty: Bool {
         nfts.isEmpty
     }
 
-    init() {
+    init(nftService: NftService, nftIds: [String]) {
+        self.nftService = nftService
+        self.nftIds = nftIds
         if let savedValue = UserDefaults.standard.string(forKey: sortOptionKey),
            let savedSort = SortOption(rawValue: savedValue) {
             selectedSort = savedSort
         } else {
-            selectedSort = .price
+            selectedSort = .rating
         }
     }
 
@@ -38,6 +46,23 @@ final class MyNFTsViewModel {
         }
     }
 
+    func loadNFTs() async {
+        guard nfts.isEmpty else { return }
+        errorMessage = nil
+        isLoading = true
+        defer { isLoading = false }
+        var loadedNfts: [Nft] = []
+        do {
+            for id in nftIds {
+                let nft = try await nftService.loadNft(id: id)
+                loadedNfts.append(nft)
+            }
+            nfts = loadedNfts
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+    
     func setSort(_ option: SortOption) {
         selectedSort = option
         UserDefaults.standard.set(option.rawValue, forKey: sortOptionKey)

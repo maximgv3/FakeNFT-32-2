@@ -4,7 +4,7 @@ protocol NftService {
     func loadNft(id: String) async throws -> Nft
 }
 
-@MainActor
+
 final class NftServiceImpl: NftService {
 
     private let networkClient: NetworkClient

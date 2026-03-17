@@ -3,7 +3,7 @@ import Foundation
 @Observable
 final class ProfileViewModel {
     
-    var isLoading: Bool = false
+    var isLoading = false
     var errorMessage: String?
     var profile: Profile?
 
@@ -23,6 +23,7 @@ final class ProfileViewModel {
         defer {
             isLoading = false
         }
+        
         do {
             profile = try await profileService.loadProfile(id: id)
         } catch let error as NetworkClientError {
