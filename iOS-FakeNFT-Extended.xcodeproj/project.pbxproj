@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4505DB952F6B2867000FE1F4 /* UserDefaultsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4505DB942F6B285E000FE1F4 /* UserDefaultsService.swift */; };
 		45122ABA2F69E402002628EC /* MyNFTsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45122AB92F69E3FE002628EC /* MyNFTsViewModel.swift */; };
 		45168AD52F618BAB00CACD7B /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45168AD42F618BA500CACD7B /* ProfileView.swift */; };
 		4524E0932F61BCA600843716 /* MyNFTsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4524E0922F61BC9D00843716 /* MyNFTsView.swift */; };
@@ -56,6 +57,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		4505DB942F6B285E000FE1F4 /* UserDefaultsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsService.swift; sourceTree = "<group>"; };
 		45122AB92F69E3FE002628EC /* MyNFTsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyNFTsViewModel.swift; sourceTree = "<group>"; };
 		45168AD42F618BA500CACD7B /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		4524E0922F61BC9D00843716 /* MyNFTsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyNFTsView.swift; sourceTree = "<group>"; };
@@ -257,6 +259,7 @@
 				F1243B622F5C59E60049A796 /* NftService.swift */,
 				F1243B632F5C59E60049A796 /* ServicesAssembly.swift */,
 				4524E0A02F61E8B500843716 /* ProfileService.swift */,
+				4505DB942F6B285E000FE1F4 /* UserDefaultsService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -434,6 +437,7 @@
 				F1243B832F5C5AE10049A796 /* ExampleRequest.swift in Sources */,
 				F1243B962F5C5B3A0049A796 /* NftDetailCellModel.swift in Sources */,
 				4524E09B2F61E4AE00843716 /* Profile.swift in Sources */,
+				4505DB952F6B2867000FE1F4 /* UserDefaultsService.swift in Sources */,
 				F1243B8A2F5C5AFF0049A796 /* LoadingView.swift in Sources */,
 				4524E09D2F61E83400843716 /* NFTRequest.swift in Sources */,
 				4524E0A42F61EB2900843716 /* ProfileViewModel.swift in Sources */,

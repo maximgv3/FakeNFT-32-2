@@ -25,12 +25,13 @@ struct MyNFTsView: View {
         }
         .navigationTitle("Мои NFT")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .tabBar)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
                     isSortDialogPresented = true
                 } label: {
-                    Image("sort")
+                    Image(.sort)
                         .font(.system(size: 24, weight: .regular))
                         .foregroundStyle(.ypBlack)
                 }

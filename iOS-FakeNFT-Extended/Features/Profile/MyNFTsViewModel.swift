@@ -1,7 +1,7 @@
 import Foundation
 import Observation
 
-@Observable
+@Observable @MainActor
 final class MyNFTsViewModel {
     enum SortOption: String {
         case price
@@ -13,9 +13,8 @@ final class MyNFTsViewModel {
     private let nftIds: [String]
     var isLoading = false
     var errorMessage: String?
-    
-    
-    private let sortOptionKey = "myNFTs.sortOption"
+
+    private let userDefaultsService: UserDefaultsService
 
     var nfts: [Nft] = []
     var selectedSort: SortOption
@@ -24,11 +23,18 @@ final class MyNFTsViewModel {
         nfts.isEmpty
     }
 
-    init(nftService: NftService, nftIds: [String]) {
+    init(
+        nftService: NftService,
+        nftIds: [String],
+        userDefaultsService: UserDefaultsService = .shared
+    ) {
         self.nftService = nftService
         self.nftIds = nftIds
-        if let savedValue = UserDefaults.standard.string(forKey: sortOptionKey),
-           let savedSort = SortOption(rawValue: savedValue) {
+        self.userDefaultsService = userDefaultsService
+
+        if let savedValue = userDefaultsService.myNFTsSortOption,
+            let savedSort = SortOption(rawValue: savedValue)
+        {
             selectedSort = savedSort
         } else {
             selectedSort = .rating
@@ -38,11 +44,11 @@ final class MyNFTsViewModel {
     var sortedNfts: [Nft] {
         switch selectedSort {
         case .price:
-            return nfts.sorted { $0.price < $1.price }
+            nfts.sorted { $0.price < $1.price }
         case .rating:
-            return nfts.sorted { $0.rating > $1.rating }
+            nfts.sorted { $0.rating > $1.rating }
         case .name:
-            return nfts.sorted { $0.name < $1.name }
+            nfts.sorted { $0.name < $1.name }
         }
     }
 
@@ -53,18 +59,26 @@ final class MyNFTsViewModel {
         defer { isLoading = false }
         var loadedNfts: [Nft] = []
         do {
-            for id in nftIds {
-                let nft = try await nftService.loadNft(id: id)
-                loadedNfts.append(nft)
+            try await withThrowingTaskGroup(of: Nft.self) { group in
+                for id in nftIds {
+                    group.addTask {
+                        try await self.nftService.loadNft(id: id)
+                    }
+                }
+
+                for try await nft in group {
+                    loadedNfts.append(nft)
+                }
             }
+
             nfts = loadedNfts
         } catch {
             errorMessage = error.localizedDescription
         }
     }
-    
+
     func setSort(_ option: SortOption) {
         selectedSort = option
-        UserDefaults.standard.set(option.rawValue, forKey: sortOptionKey)
+        userDefaultsService.myNFTsSortOption = option.rawValue
     }
 }
