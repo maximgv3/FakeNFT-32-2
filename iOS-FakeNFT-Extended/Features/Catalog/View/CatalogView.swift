@@ -80,7 +80,7 @@ struct CatalogView: View {
         ScrollView {
             LazyVStack(spacing: Constants.cellSpacing) {
                 if let viewModel {
-                    ForEach(viewModel.collections, id: \.id) { collection in
+                    ForEach(viewModel.sortedCollections, id: \.id) { collection in
                         NavigationLink(destination: CollectionDetailView(collection: collection)) {
                             CatalogCollectionCell(
                                 name: collection.name,
