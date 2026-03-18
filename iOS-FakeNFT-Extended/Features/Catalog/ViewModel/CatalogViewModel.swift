@@ -10,6 +10,18 @@ final class CatalogViewModel {
     var isLoading = false
     var showError = false
     var isSortSheetPresented = false
+    var selectedSortOption: SortOption? = nil
+
+    var sortedCollections: [NftCollection] {
+        switch selectedSortOption {
+        case .byName:
+            return collections.sorted { $0.name < $1.name }
+        case .byNFTCount:
+            return collections.sorted { $0.nftCount > $1.nftCount }
+        case nil:
+            return collections
+        }
+    }
 
     private let catalogService: CatalogService
 

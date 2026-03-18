@@ -5,6 +5,7 @@ struct CatalogSortView: View {
     // MARK: - Properties
 
     @Binding var isPresented: Bool
+    @Binding var selectedSortOption: SortOption?
 
     // MARK: - Body
 
@@ -44,7 +45,7 @@ struct CatalogSortView: View {
             isPresented = false
         } label: {
             Text("Закрыть")
-                .font(.system(size: 20, weight: .semibold))
+                .font(.system(size: 20, weight: .bold))
                 .foregroundStyle(Color.ypUBlue)
                 .frame(maxWidth: .infinity)
                 .frame(height: Constants.buttonHeight)
@@ -57,14 +58,27 @@ struct CatalogSortView: View {
 
     private func sortButton(option: SortOption) -> some View {
         Button {
+            selectedSortOption = option
             isPresented = false
         } label: {
-            Text(option.title)
-                .font(.system(size: 20))
-                .foregroundStyle(Color.ypUBlue)
-                .frame(maxWidth: .infinity)
-                .frame(height: Constants.buttonHeight)
-                .contentShape(Rectangle())
+            ZStack {
+                Text(option.title)
+                    .font(.system(size: 20))
+                    .foregroundStyle(Color.ypUBlue)
+                    .frame(maxWidth: .infinity)
+
+                if selectedSortOption == option {
+                    HStack {
+                        Spacer()
+                        Image(systemName: "checkmark")
+                            .foregroundStyle(Color.ypUBlue)
+                    }
+                    .padding(.horizontal, Constants.buttonHorizontalPadding)
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .frame(height: Constants.buttonHeight)
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
     }
@@ -80,5 +94,6 @@ private extension CatalogSortView {
         static let horizontalPadding: CGFloat = 8
         static let bottomPadding: CGFloat = 8
         static let groupSpacing: CGFloat = 8
+        static let buttonHorizontalPadding: CGFloat = 16
     }
 }

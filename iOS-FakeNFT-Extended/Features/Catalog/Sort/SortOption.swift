@@ -1,4 +1,4 @@
-enum SortOption {
+enum SortOption: Equatable {
     case byName
     case byNFTCount
 

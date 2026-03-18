@@ -58,10 +58,16 @@ struct CatalogView: View {
                             viewModel?.isSortSheetPresented = false
                         }
 
-                    CatalogSortView(isPresented: Binding(
-                        get: { viewModel?.isSortSheetPresented ?? false },
-                        set: { viewModel?.isSortSheetPresented = $0 }
-                    ))
+                    CatalogSortView(
+                        isPresented: Binding(
+                            get: { viewModel?.isSortSheetPresented ?? false },
+                            set: { viewModel?.isSortSheetPresented = $0 }
+                        ),
+                        selectedSortOption: Binding(
+                            get: { viewModel?.selectedSortOption },
+                            set: { viewModel?.selectedSortOption = $0 }
+                        )
+                    )
                 }
                 .background(ClearBackground())
             }
@@ -123,7 +129,7 @@ private extension CatalogView {
         static let horizontalPadding: CGFloat = 16
         static let topPadding: CGFloat = 20
         static let cellSpacing: CGFloat = 21
-        static let dimOpacity: Double = 0.5
+        static let dimOpacity: Double = 0.4
     }
 }
 
