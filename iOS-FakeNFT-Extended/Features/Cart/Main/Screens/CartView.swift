@@ -15,6 +15,7 @@ struct CartView: View {
     
     @State private var viewModel: CartViewModel
     @State private var isSortDialogPresented = false
+    @State private var showPayment = false
     
     // MARK: - Init
     
@@ -28,9 +29,46 @@ struct CartView: View {
         viewModel.items.map(\.price).reduce(0, +)
     }
     
+    private var isDeleteConfirmationPresented: Bool {
+        viewModel.itemPendingRemoval != nil
+    }
+    
     // MARK: - Body
     
     var body: some View {
+        ZStack {
+            stateView
+            deleteOverlayView
+        }
+        .animation(.easeInOut(duration: 0.2), value: isDeleteConfirmationPresented)
+        .background(backgroundView.ignoresSafeArea())
+        .barsVisibility(hidden: isDeleteConfirmationPresented)
+        .toolbar {
+            if !isDeleteConfirmationPresented {
+                sortToolbar
+            }
+        }
+        .confirmationDialog(
+            "Сортировка",
+            isPresented: $isSortDialogPresented,
+            titleVisibility: .visible
+        ) {
+            sortDialog
+        }
+        .navigationDestination(isPresented: $showPayment) {
+            PaymentView()
+                .toolbar(.hidden, for: .tabBar)
+                .toolbarBackground(.hidden, for: .tabBar)
+        }
+        .task {
+            await viewModel.load()
+        }
+    }
+    
+    // MARK: - State View
+    
+    @ViewBuilder
+    private var stateView: some View {
         Group {
             switch viewModel.state {
             case .loading:
@@ -46,25 +84,38 @@ struct CartView: View {
                 errorView(message)
             }
         }
-        .background(backgroundView, ignoresSafeAreaEdges: .all)
-        .toolbar { sortToolbar }
-        .confirmationDialog(
-            "Сортировка",
-            isPresented: $isSortDialogPresented,
-            titleVisibility: .visible
-        ) {
-            sortDialog
-        }
-        .task {
-            await viewModel.load()
+    }
+    
+    // MARK: - Delete Overlay
+    
+    @ViewBuilder
+    private var deleteOverlayView: some View {
+        if let item = viewModel.itemPendingRemoval {
+            Rectangle()
+                .fill(.ultraThinMaterial)
+                .ignoresSafeArea()
+                .overlay(Color.black.opacity(0.16))
+                .transition(.opacity)
+            
+            DeleteCartItemView(
+                item: item,
+                isDeleting: viewModel.isDeleting,
+                onDelete: {
+                    Task { await viewModel.confirmRemoval() }
+                },
+                onCancel: {
+                    viewModel.cancelRemoval()
+                }
+            )
+            .transition(.scale(scale: 0.96).combined(with: .opacity))
+            .zIndex(1)
         }
     }
     
     // MARK: - Views
     
     private var loadingView: some View {
-        ProgressView()
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        SkeletonCartView()
     }
     
     private var emptyView: some View {
@@ -74,13 +125,17 @@ struct CartView: View {
     private var contentView: some View {
         CartListView(
             items: viewModel.items,
-            onRemove: { _ in },
+            onRemove: { item in
+                viewModel.didTapRemove(on: item)
+            },
             onRefresh: {
                 await viewModel.refresh()
             }
         )
         .safeAreaInset(edge: .bottom) {
-            footerView
+            if !isDeleteConfirmationPresented {
+                footerView
+            }
         }
     }
     
@@ -103,7 +158,7 @@ struct CartView: View {
         CartFooterView(
             totalCount: viewModel.items.count,
             totalPrice: total,
-            payAction: { }
+            payAction: { showPayment = true }
         )
     }
     
@@ -153,5 +208,14 @@ struct CartView: View {
         CartView(
             viewModel: CartViewModel(cartService: MockCartService())
         )
+    }
+}
+
+#Preview("Delete Confirmation") {
+    let viewModel = CartViewModel(cartService: MockCartService())
+    viewModel.itemPendingRemoval = .mock1
+    
+    return NavigationStack {
+        CartView(viewModel: viewModel)
     }
 }
