@@ -18,57 +18,7 @@ struct PaymentView: View {
     @State private var showingAgreement = false
     
     private let agreementURL = URL(string: "https://yandex.ru/legal/practicum_termsofuse/")!
-    
-    private let methods: [PaymentMethod] = [
-        PaymentMethod(
-            id: "1",
-            title: "Bitcoin",
-            code: "BTC",
-            imageName: "BTC"
-        ),
-        PaymentMethod(
-            id: "2",
-            title: "Dogecoin",
-            code: "DOGE",
-            imageName: "DOGE"
-        ),
-        PaymentMethod(
-            id: "3",
-            title: "Tether",
-            code: "USDT",
-            imageName: "USDT"
-        ),
-        PaymentMethod(
-            id: "4",
-            title: "Apecoin",
-            code: "APE",
-            imageName: "APE"
-        ),
-        PaymentMethod(
-            id: "5",
-            title: "Solana",
-            code: "SOL",
-            imageName: "SOL"
-        ),
-        PaymentMethod(
-            id: "6",
-            title: "Ethereum",
-            code: "ETH",
-            imageName: "ETH"
-        ),
-        PaymentMethod(
-            id: "7",
-            title: "Cardano",
-            code: "ADA",
-            imageName: "ADA"
-        ),
-        PaymentMethod(
-            id: "8",
-            title: "Shiba Inu",
-            code: "SHIB",
-            imageName: "SHIB"
-        )
-    ]
+    private let methods = PaymentMethod.mock 
     
     private let columns: [GridItem] = [
         GridItem(.flexible(), spacing: 7),

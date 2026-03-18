@@ -37,50 +37,12 @@ struct CartView: View {
     
     var body: some View {
         ZStack {
-            Group {
-                switch viewModel.state {
-                case .loading:
-                    loadingView
-                    
-                case .empty:
-                    emptyView
-                    
-                case .success:
-                    contentView
-                    
-                case .error(let message):
-                    errorView(message)
-                }
-            }
-            
-            if let item = viewModel.itemPendingRemoval {
-                Rectangle()
-                    .fill(.ultraThinMaterial)
-                    .ignoresSafeArea()
-                    .overlay(
-                        Color.black.opacity(0.16)
-                    )
-                    .transition(.opacity)
-                
-                DeleteCartItemView(
-                    item: item,
-                    isDeleting: viewModel.isDeleting,
-                    onDelete: {
-                        Task {
-                            await viewModel.confirmRemoval()
-                        }
-                    },
-                    onCancel: {
-                        viewModel.cancelRemoval()
-                    }
-                )
-                .transition(.scale(scale: 0.96).combined(with: .opacity))
-                .zIndex(1)
-            }
+            stateView
+            deleteOverlayView
         }
         .animation(.easeInOut(duration: 0.2), value: isDeleteConfirmationPresented)
         .background(backgroundView.ignoresSafeArea())
-        .applyBarsVisibility(hidden: isDeleteConfirmationPresented)
+        .barsVisibility(hidden: isDeleteConfirmationPresented)
         .toolbar {
             if !isDeleteConfirmationPresented {
                 sortToolbar
@@ -100,6 +62,53 @@ struct CartView: View {
         }
         .task {
             await viewModel.load()
+        }
+    }
+    
+    // MARK: - State View
+    
+    @ViewBuilder
+    private var stateView: some View {
+        Group {
+            switch viewModel.state {
+            case .loading:
+                loadingView
+                
+            case .empty:
+                emptyView
+                
+            case .success:
+                contentView
+                
+            case .error(let message):
+                errorView(message)
+            }
+        }
+    }
+    
+    // MARK: - Delete Overlay
+    
+    @ViewBuilder
+    private var deleteOverlayView: some View {
+        if let item = viewModel.itemPendingRemoval {
+            Rectangle()
+                .fill(.ultraThinMaterial)
+                .ignoresSafeArea()
+                .overlay(Color.black.opacity(0.16))
+                .transition(.opacity)
+            
+            DeleteCartItemView(
+                item: item,
+                isDeleting: viewModel.isDeleting,
+                onDelete: {
+                    Task { await viewModel.confirmRemoval() }
+                },
+                onCancel: {
+                    viewModel.cancelRemoval()
+                }
+            )
+            .transition(.scale(scale: 0.96).combined(with: .opacity))
+            .zIndex(1)
         }
     }
     
@@ -189,26 +198,6 @@ struct CartView: View {
             
             Button("Закрыть", role: .cancel) { }
         }
-    }
-}
-
-// MARK: - ViewModifier для управления видимостью баров
-
-struct BarsVisibilityModifier: ViewModifier {
-    let hidden: Bool
-    
-    func body(content: Content) -> some View {
-        content
-            .toolbar(hidden ? .hidden : .visible, for: .navigationBar)
-            .toolbar(hidden ? .hidden : .visible, for: .tabBar)
-    }
-}
-
-// MARK: - View Extension
-
-extension View {
-    func applyBarsVisibility(hidden: Bool) -> some View {
-        modifier(BarsVisibilityModifier(hidden: hidden))
     }
 }
 

@@ -59,7 +59,7 @@ struct SkeletonCartCell: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            SkeletonBlock(cornerRadius: 20, isCircle: true)
+            SkeletonBlock(cornerRadius: 20, isCircle: true) 
                 .frame(width: 40, height: 40)
         }
     }
@@ -95,54 +95,6 @@ struct SkeletonFooterView: View {
                 topTrailingRadius: 12
             )
         )
-    }
-}
-
-// MARK: - SkeletonBlock
-
-struct SkeletonBlock: View {
-    let cornerRadius: CGFloat
-    var isCircle: Bool = false
-
-    @State private var offsetX: CGFloat = -200
-
-    var body: some View {
-        ZStack {
-            if isCircle {
-                Circle()
-                    .fill(Color.gray.opacity(0.3))
-            } else {
-                RoundedRectangle(cornerRadius: cornerRadius)
-                    .fill(Color.gray.opacity(0.3))
-            }
-
-            GeometryReader { geometry in
-                LinearGradient(
-                    colors: [
-                        .clear,
-                        .white.opacity(0.45),
-                        .clear
-                    ],
-                    startPoint: .leading,
-                    endPoint: .trailing
-                )
-                .frame(width: geometry.size.width * 0.8)
-                .offset(x: offsetX)
-                .onAppear {
-                    offsetX = -geometry.size.width
-                    withAnimation(.linear(duration: 1.4).repeatForever(autoreverses: false)) {
-                        offsetX = geometry.size.width
-                    }
-                }
-            }
-        }
-        .mask {
-            if isCircle {
-                Circle()
-            } else {
-                RoundedRectangle(cornerRadius: cornerRadius)
-            }
-        }
     }
 }
 
