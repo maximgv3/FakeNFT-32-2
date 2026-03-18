@@ -15,6 +15,8 @@
 		84DA688A2F6425B3001FBB40 /* CatalogCollectionsRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DA68892F6425B2001FBB40 /* CatalogCollectionsRequest.swift */; };
 		84DA688D2F6426A3001FBB40 /* CatalogViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DA688C2F6426A0001FBB40 /* CatalogViewModel.swift */; };
 		84DA688F2F64515A001FBB40 /* CollectionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DA688E2F645158001FBB40 /* CollectionDetailView.swift */; };
+		84DA68922F6ABD44001FBB40 /* SortOption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DA68912F6ABD41001FBB40 /* SortOption.swift */; };
+		84DA68942F6ABD5F001FBB40 /* CatalogSortView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DA68932F6ABD5C001FBB40 /* CatalogSortView.swift */; };
 		ABC5E1D82C3204A9002B4068 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = ABC5E1D72C3204A9002B4068 /* Kingfisher */; };
 		ABC5E1E22C320535002B4068 /* ProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = ABC5E1E12C320535002B4068 /* ProgressHUD */; };
 		F1243B7C2F5C5AB20049A796 /* iOS_FakeNFT_ExtendedApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1243B482F5C59E60049A796 /* iOS_FakeNFT_ExtendedApp.swift */; };
@@ -59,6 +61,8 @@
 		84DA68892F6425B2001FBB40 /* CatalogCollectionsRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogCollectionsRequest.swift; sourceTree = "<group>"; };
 		84DA688C2F6426A0001FBB40 /* CatalogViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogViewModel.swift; sourceTree = "<group>"; };
 		84DA688E2F645158001FBB40 /* CollectionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionDetailView.swift; sourceTree = "<group>"; };
+		84DA68912F6ABD41001FBB40 /* SortOption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SortOption.swift; sourceTree = "<group>"; };
+		84DA68932F6ABD5C001FBB40 /* CatalogSortView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogSortView.swift; sourceTree = "<group>"; };
 		ABC5E1682C31F5AF002B4068 /* iOS-FakeNFT-Extended.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "iOS-FakeNFT-Extended.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1243B482F5C59E60049A796 /* iOS_FakeNFT_ExtendedApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOS_FakeNFT_ExtendedApp.swift; sourceTree = "<group>"; };
 		F1243B492F5C59E60049A796 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -112,6 +116,15 @@
 				84DA688C2F6426A0001FBB40 /* CatalogViewModel.swift */,
 			);
 			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		84DA68902F6ABD09001FBB40 /* Sort */ = {
+			isa = PBXGroup;
+			children = (
+				84DA68932F6ABD5C001FBB40 /* CatalogSortView.swift */,
+				84DA68912F6ABD41001FBB40 /* SortOption.swift */,
+			);
+			path = Sort;
 			sourceTree = "<group>";
 		};
 		ABC5E15F2C31F5AF002B4068 = {
@@ -249,6 +262,7 @@
 		F1243B672F5C59E60049A796 /* Catalog */ = {
 			isa = PBXGroup;
 			children = (
+				84DA68902F6ABD09001FBB40 /* Sort */,
 				84DA688B2F64268E001FBB40 /* ViewModel */,
 				F1243B662F5C59E60049A796 /* View */,
 			);
@@ -404,6 +418,7 @@
 				F1243B942F5C5B310049A796 /* NftDetailAssembly.swift in Sources */,
 				F1243B7E2F5C5AC90049A796 /* TabBarView.swift in Sources */,
 				84DA688D2F6426A3001FBB40 /* CatalogViewModel.swift in Sources */,
+				84DA68942F6ABD5F001FBB40 /* CatalogSortView.swift in Sources */,
 				F1243B862F5C5AEE0049A796 /* NftStorage.swift in Sources */,
 				F1243B832F5C5AE10049A796 /* ExampleRequest.swift in Sources */,
 				F1243B962F5C5B3A0049A796 /* NftDetailCellModel.swift in Sources */,
@@ -416,6 +431,7 @@
 				4524E0992F61C51000843716 /* WebView.swift in Sources */,
 				F1243B7C2F5C5AB20049A796 /* iOS_FakeNFT_ExtendedApp.swift in Sources */,
 				F1243B852F5C5AE90049A796 /* RequestConstants.swift in Sources */,
+				84DA68922F6ABD44001FBB40 /* SortOption.swift in Sources */,
 				F1243B8C2F5C5B070049A796 /* LinePageControl.swift in Sources */,
 				84DA68822F641B2A001FBB40 /* CatalogView.swift in Sources */,
 				F1243B972F5C5B3F0049A796 /* NftImageCollectionViewCell.swift in Sources */,

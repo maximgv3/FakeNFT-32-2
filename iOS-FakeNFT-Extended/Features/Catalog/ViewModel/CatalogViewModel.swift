@@ -9,6 +9,7 @@ final class CatalogViewModel {
     var collections: [NftCollection] = []
     var isLoading = false
     var showError = false
+    var isSortSheetPresented = false
 
     private let catalogService: CatalogService
 
