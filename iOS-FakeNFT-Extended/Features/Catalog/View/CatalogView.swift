@@ -69,7 +69,7 @@ struct CatalogView: View {
                         )
                     )
                 }
-                .background(ClearBackground())
+                .presentationBackground(.clear)
             }
         }
     }
@@ -131,18 +131,4 @@ private extension CatalogView {
         static let cellSpacing: CGFloat = 21
         static let dimOpacity: Double = 0.5
     }
-}
-
-// MARK: - ClearBackground
-
-private struct ClearBackground: UIViewRepresentable {
-    func makeUIView(context: Context) -> UIView {
-        let view = UIView()
-        DispatchQueue.main.async {
-            view.superview?.superview?.backgroundColor = .clear
-        }
-        return view
-    }
-
-    func updateUIView(_ uiView: UIView, context: Context) {}
 }
