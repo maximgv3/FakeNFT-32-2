@@ -10,7 +10,12 @@ final class CatalogViewModel {
     var isLoading = false
     var showError = false
     var isSortSheetPresented = false
-    var selectedSortOption: SortOption? = nil
+
+    var selectedSortOption: SortOption? {
+        didSet {
+            saveSortOption(selectedSortOption)
+        }
+    }
 
     var sortedCollections: [NftCollection] {
         switch selectedSortOption {
@@ -29,6 +34,7 @@ final class CatalogViewModel {
 
     init(catalogService: CatalogService) {
         self.catalogService = catalogService
+        self.selectedSortOption = loadSortOption()
     }
 
     // MARK: - Public
@@ -41,5 +47,34 @@ final class CatalogViewModel {
             showError = true
         }
         isLoading = false
+    }
+
+    // MARK: - Private
+
+    private func saveSortOption(_ option: SortOption?) {
+        switch option {
+        case .byName:
+            UserDefaults.standard.set("byName", forKey: Constants.sortOptionKey)
+        case .byNFTCount:
+            UserDefaults.standard.set("byNFTCount", forKey: Constants.sortOptionKey)
+        case nil:
+            UserDefaults.standard.removeObject(forKey: Constants.sortOptionKey)
+        }
+    }
+
+    private func loadSortOption() -> SortOption? {
+        switch UserDefaults.standard.string(forKey: Constants.sortOptionKey) {
+        case "byName": return .byName
+        case "byNFTCount": return .byNFTCount
+        default: return nil
+        }
+    }
+}
+
+// MARK: - Constants
+
+private extension CatalogViewModel {
+    enum Constants {
+        static let sortOptionKey = "catalogSortOption"
     }
 }

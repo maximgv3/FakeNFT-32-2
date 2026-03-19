@@ -15,7 +15,6 @@ struct CatalogSortView: View {
             closeButton
         }
         .padding(.horizontal, Constants.horizontalPadding)
-        .padding(.bottom, Constants.bottomPadding)
     }
 
     // MARK: - Subviews
@@ -92,7 +91,6 @@ private extension CatalogSortView {
         static let buttonHeight: CGFloat = 61
         static let cornerRadius: CGFloat = 13
         static let horizontalPadding: CGFloat = 8
-        static let bottomPadding: CGFloat = 8
         static let groupSpacing: CGFloat = 8
         static let buttonHorizontalPadding: CGFloat = 16
     }

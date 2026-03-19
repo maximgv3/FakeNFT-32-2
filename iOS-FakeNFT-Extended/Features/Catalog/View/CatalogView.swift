@@ -129,7 +129,7 @@ private extension CatalogView {
         static let horizontalPadding: CGFloat = 16
         static let topPadding: CGFloat = 20
         static let cellSpacing: CGFloat = 21
-        static let dimOpacity: Double = 0.4
+        static let dimOpacity: Double = 0.5
     }
 }
 
