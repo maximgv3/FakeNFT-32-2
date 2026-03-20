@@ -31,7 +31,16 @@ struct ProfileView: View {
             .navigationDestination(for: Route.self) { route in
                 switch route {
                 case .edit:
-                    ProfileEditView()
+                    if let profile = viewModel?.profile {
+                        ProfileEditView(
+                            profile: profile,
+                            profileService: servicesAssembly.profileService
+                        ) { updatedProfile in
+                            viewModel?.profile = updatedProfile
+                        }
+                    } else {
+                        EmptyView()
+                    }
                 case .myNFTs:
                     MyNFTsView(
                         nftIds: viewModel?.profile?.nfts ?? [],

@@ -1,31 +1,39 @@
 import SwiftUI
+import Observation
 
 struct ProfileEditView: View {
     @Environment(\.dismiss) private var dismiss
 
+    @State private var viewModel: ProfileEditViewModel
+    private let onSave: (Profile) -> Void
+
     @State private var userInputPhotoUrl: String = ""
-    @State private var photoUrl: URL? = URL(
-        string:
-            "https://i.pinimg.com/736x/e2/b3/ff/e2b3ff329c3a6ce26afcd1c53d9de30a.jpg"
-    )!
-    @State private var previousPhotoUrl: URL?
     @State private var isImageLoadingFailedAlertPresented = false
     @FocusState private var isInputFocused: Bool
-    @State private var nameText: String = "Максим Пупс"
-    @State private var descriptionText: String =
-        "Дизайнер из Казани, люблю цифровое искусство и бейглы. В моей коллекции уже 100+ NFT, и еще больше — на моём сайте. Открыт к коллаборациям."
-    @State private var siteText: String = "https://maxipups.com"
     @State private var isChangeAvatarDialogPresented = false
     @State private var isChangeAvatarLinkAlertPresented = false
     @State private var isWrongUrlAlertPresented = false
+
+    init(
+        profile: Profile,
+        profileService: ProfileService,
+        onSave: @escaping (Profile) -> Void = { _ in }
+    ) {
+        _viewModel = State(initialValue: ProfileEditViewModel(profile: profile, profileService: profileService))
+        self.onSave = onSave
+    }
     
     var body: some View {
+        @Bindable var viewModel = viewModel
         VStack(spacing: 24) {
             photoStack
-            makeBlock(header: "Имя", text: $nameText)
-            makeBlock(header: "Описание", text: $descriptionText, lineLimit: 5)
-            makeBlock(header: "Сайт", text: $siteText)
+            makeBlock(header: "Имя", text: $viewModel.nameText)
+            makeBlock(header: "Описание", text: $viewModel.descriptionText, lineLimit: 5)
+            makeBlock(header: "Сайт", text: $viewModel.siteText)
             Spacer()
+            if viewModel.hasChanges {
+                saveButton
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .contentShape(Rectangle())
@@ -75,10 +83,16 @@ struct ProfileEditView: View {
                 isChangeAvatarLinkAlertPresented = true
             }
         }
+        .alert("Не удалось сохранить профиль", isPresented: .constant(viewModel.isSaveErrorPresented)) {
+            Button("Ок", role: .cancel) {
+                viewModel.dismissSaveError()
+            }
+        } message: {
+            Text(viewModel.errorMessage ?? "")
+        }
         .alert("Не удалось загрузить изображение", isPresented: $isImageLoadingFailedAlertPresented) {
             Button("Ок") {
-                photoUrl = previousPhotoUrl
-                previousPhotoUrl = nil
+                viewModel.restorePreviousPhoto()
             }
         } message: {
             Text("Проверьте ссылку на изображение")
@@ -88,13 +102,48 @@ struct ProfileEditView: View {
         }
     }
 
+    private var saveButton: some View {
+        Button {
+            saveTapped()
+        } label: {
+            if viewModel.isLoading {
+                ProgressView()
+                    .tint(.ypWhite)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 60)
+            } else {
+                Text("Сохранить")
+                    .font(.system(size: 17, weight: .bold))
+                    .foregroundStyle(.ypWhite)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 60)
+            }
+        }
+        .background(Color.ypBlack)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .disabled(viewModel.isLoading)
+        .padding(.horizontal, 16)
+        .padding(.bottom, 16)
+    }
+
+    private func saveTapped() {
+        Task {
+            do {
+                let savedProfile = try await viewModel.saveProfile()
+                onSave(savedProfile)
+                dismiss()
+            } catch {
+            }
+        }
+    }
+
     private func changeActionTapped() {
-        userInputPhotoUrl = photoUrl?.absoluteString ?? ""
+        userInputPhotoUrl = viewModel.photoUrl?.absoluteString ?? ""
         isChangeAvatarLinkAlertPresented = true
     }
 
     private func deleteActionTapped() {
-        photoUrl = nil
+        viewModel.deletePhoto()
     }
 
     private func editPhotoTapped() {
@@ -102,32 +151,9 @@ struct ProfileEditView: View {
     }
 
     private func savePhotoLink() {
-        let trimmedInput = userInputPhotoUrl.trimmingCharacters(in: .whitespacesAndNewlines)
-        let normalizedInput = normalizePhotoURLString(trimmedInput)
-
-        guard let url = URL(string: normalizedInput),
-              let scheme = url.scheme?.lowercased(),
-              ["http", "https"].contains(scheme),
-              let host = url.host,
-              !host.isEmpty else {
+        if !viewModel.applyPhotoLink(userInputPhotoUrl) {
             isWrongUrlAlertPresented = true
-            return
         }
-
-        previousPhotoUrl = photoUrl
-        userInputPhotoUrl = normalizedInput
-        photoUrl = url
-    }
-
-    private func normalizePhotoURLString(_ input: String) -> String {
-        guard !input.isEmpty else { return input }
-
-        if input.lowercased().hasPrefix("http://") ||
-            input.lowercased().hasPrefix("https://") {
-            return input
-        }
-
-        return "https://\(input)"
     }
 
     private var photoStack: some View {
@@ -154,7 +180,7 @@ struct ProfileEditView: View {
 
     private var photo: some View {
         Group {
-            if let photoUrl {
+            if let photoUrl = viewModel.photoUrl {
                 AsyncImage(url: photoUrl) { phase in
                     switch phase {
                     case .empty:
@@ -174,7 +200,7 @@ struct ProfileEditView: View {
                     case .failure:
                         placeholderPhoto
                             .onAppear {
-                                if previousPhotoUrl != nil {
+                                if viewModel.previousPhotoUrl != nil {
                                     isImageLoadingFailedAlertPresented = true
                                 }
                             }
@@ -217,5 +243,16 @@ struct ProfileEditView: View {
 }
 
 #Preview {
-    ProfileEditView()
+    ProfileEditView(
+        profile: Profile(
+            id: "1",
+            name: "Максим Пупс",
+            avatar: "https://i.pinimg.com/736x/e2/b3/ff/e2b3ff329c3a6ce26afcd1c53d9de30a.jpg",
+            description: "Дизайнер из Казани, люблю цифровое искусство и бейглы. В моей коллекции уже 100+ NFT, и еще больше — на моём сайте. Открыт к коллаборациям.",
+            website: "https://maxipups.com",
+            nfts: [],
+            likes: []
+        ),
+        profileService: ProfileServiceImpl(networkClient: DefaultNetworkClient())
+    )
 }
