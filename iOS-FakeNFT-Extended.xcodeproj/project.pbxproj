@@ -20,6 +20,8 @@
 		4524E0A12F61E8BA00843716 /* ProfileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4524E0A02F61E8B500843716 /* ProfileService.swift */; };
 		4524E0A42F61EB2900843716 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4524E0A32F61EB2400843716 /* ProfileViewModel.swift */; };
 		45712A902F69D88C0055589E /* RatingStars.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45712A8F2F69D8830055589E /* RatingStars.swift */; };
+		45E1AEF72F6DA43C002630B0 /* UpdateProfileRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45E1AEF62F6DA437002630B0 /* UpdateProfileRequest.swift */; };
+		45E1AEFA2F6DBC7D002630B0 /* ProfileEditViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45E1AEF92F6DBC72002630B0 /* ProfileEditViewModel.swift */; };
 		ABC5E1D82C3204A9002B4068 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = ABC5E1D72C3204A9002B4068 /* Kingfisher */; };
 		ABC5E1E22C320535002B4068 /* ProgressHUD in Frameworks */ = {isa = PBXBuildFile; productRef = ABC5E1E12C320535002B4068 /* ProgressHUD */; };
 		F1243B7C2F5C5AB20049A796 /* iOS_FakeNFT_ExtendedApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1243B482F5C59E60049A796 /* iOS_FakeNFT_ExtendedApp.swift */; };
@@ -70,6 +72,9 @@
 		4524E0A02F61E8B500843716 /* ProfileService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileService.swift; sourceTree = "<group>"; };
 		4524E0A32F61EB2400843716 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		45712A8F2F69D8830055589E /* RatingStars.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingStars.swift; sourceTree = "<group>"; };
+		45E1AEF62F6DA437002630B0 /* UpdateProfileRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateProfileRequest.swift; sourceTree = "<group>"; };
+		45E1AEF82F6DB7B9002630B0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		45E1AEF92F6DBC72002630B0 /* ProfileEditViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditViewModel.swift; sourceTree = "<group>"; };
 		ABC5E1682C31F5AF002B4068 /* iOS-FakeNFT-Extended.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "iOS-FakeNFT-Extended.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1243B482F5C59E60049A796 /* iOS_FakeNFT_ExtendedApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOS_FakeNFT_ExtendedApp.swift; sourceTree = "<group>"; };
 		F1243B492F5C59E60049A796 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -122,6 +127,7 @@
 			isa = PBXGroup;
 			children = (
 				4524E0A32F61EB2400843716 /* ProfileViewModel.swift */,
+				45E1AEF92F6DBC72002630B0 /* ProfileEditViewModel.swift */,
 				45122AB92F69E3FE002628EC /* MyNFTsViewModel.swift */,
 				45168AD32F618BA100CACD7B /* Views */,
 			);
@@ -158,6 +164,7 @@
 		ABC5E16A2C31F5AF002B4068 /* iOS-FakeNFT-Extended */ = {
 			isa = PBXGroup;
 			children = (
+				45E1AEF82F6DB7B9002630B0 /* Info.plist */,
 				F1243B4B2F5C59E60049A796 /* App */,
 				F1243B5F2F5C59E60049A796 /* Core */,
 				F1243B612F5C59E60049A796 /* Models */,
@@ -197,6 +204,7 @@
 				F1243B522F5C59E60049A796 /* NftByIdRequest.swift */,
 				4524E09C2F61E83400843716 /* NFTRequest.swift */,
 				4524E09E2F61E84200843716 /* ProfileRequest.swift */,
+				45E1AEF62F6DA437002630B0 /* UpdateProfileRequest.swift */,
 				F1243B532F5C59E60049A796 /* RequestConstants.swift */,
 			);
 			path = Network;
@@ -426,6 +434,7 @@
 				F1243B902F5C5B1E0049A796 /* TestCatalogView.swift in Sources */,
 				4524E0952F61BCB100843716 /* FavouriteNFTsView.swift in Sources */,
 				F1243B802F5C5AD40049A796 /* Fonts.swift in Sources */,
+				45E1AEF72F6DA43C002630B0 /* UpdateProfileRequest.swift in Sources */,
 				F1243B912F5C5B240049A796 /* NftDetailBridgeView.swift in Sources */,
 				F1243B952F5C5B350049A796 /* NftDetailInput.swift in Sources */,
 				F1243B7F2F5C5AD00049A796 /* Colors.swift in Sources */,
@@ -441,6 +450,7 @@
 				F1243B8A2F5C5AFF0049A796 /* LoadingView.swift in Sources */,
 				4524E09D2F61E83400843716 /* NFTRequest.swift in Sources */,
 				4524E0A42F61EB2900843716 /* ProfileViewModel.swift in Sources */,
+				45E1AEFA2F6DBC7D002630B0 /* ProfileEditViewModel.swift in Sources */,
 				F1243B822F5C5ADD0049A796 /* NetworkClient.swift in Sources */,
 				F1243B842F5C5AE60049A796 /* NftByIdRequest.swift in Sources */,
 				F1243B922F5C5B290049A796 /* NftDetailViewController.swift in Sources */,
@@ -610,9 +620,10 @@
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS-FakeNFT-Extended/Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = NO;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -639,9 +650,10 @@
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "iOS-FakeNFT-Extended/Info.plist";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = NO;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
