@@ -7,23 +7,30 @@
 
 import SwiftUI
 
-// MARK: - PaymentView
-
 struct PaymentView: View {
     
-    // MARK: - Properties
-    
     @Environment(\.dismiss) private var dismiss
-    @State private var selectedMethodID: String?
+    @State private var viewModel: PaymentViewModel
+    
     @State private var showingAgreement = false
+    @State private var showSuccess = false
+    @State private var errorMessage: String?
+    @State private var errorMessageTimer: Timer?
     
     private let agreementURL = URL(string: "https://yandex.ru/legal/practicum_termsofuse/")!
-    private let methods = PaymentMethod.mock 
+    private let onSuccess: () -> Void
     
     private let columns: [GridItem] = [
         GridItem(.flexible(), spacing: 7),
         GridItem(.flexible(), spacing: 7)
     ]
+    
+    // MARK: - Init
+    
+    init(networkClient: NetworkClient, onSuccess: @escaping () -> Void) {
+        _viewModel = State(initialValue: PaymentViewModel(networkClient: networkClient))
+        self.onSuccess = onSuccess
+    }
     
     // MARK: - Body
     
@@ -39,10 +46,37 @@ struct PaymentView: View {
         .background(backgroundView.ignoresSafeArea())
         .navigationTitle("Выберите способ оплаты")
         .navigationBarTitleDisplayMode(.inline)
+        .task {
+            await viewModel.loadCurrencies()
+        }
         .navigationDestination(isPresented: $showingAgreement) {
             WebView(url: agreementURL)
                 .navigationTitle("Пользовательское соглашение")
                 .navigationBarTitleDisplayMode(.inline)
+        }
+        .navigationDestination(isPresented: $showSuccess) {
+            PaymentSuccessView {
+                dismiss()
+                onSuccess()
+            }
+        }
+        .onChange(of: viewModel.state) { oldState, newState in
+            handleStateChange(newState)
+        }
+        .onDisappear {
+            viewModel.reset()
+            errorMessageTimer?.invalidate()
+        }
+        .alert(
+            "Ошибка",
+            isPresented: Binding(
+                get: { errorMessage != nil },
+                set: { _ in errorMessage = nil }
+            )
+        ) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(errorMessage ?? "")
         }
     }
     
@@ -50,13 +84,13 @@ struct PaymentView: View {
     
     private var paymentMethodsGrid: some View {
         LazyVGrid(columns: columns, spacing: 7) {
-            ForEach(methods) { method in
+            ForEach(viewModel.paymentMethods) { method in
                 PaymentMethodCell(
                     method: method,
-                    isSelected: selectedMethodID == method.id
+                    isSelected: viewModel.selectedMethodID == method.id
                 )
                 .onTapGesture {
-                    selectedMethodID = method.id
+                    viewModel.selectedMethodID = method.id
                 }
             }
         }
@@ -77,14 +111,14 @@ struct PaymentView: View {
     private var agreementView: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text("Совершая покупку, вы соглашаетесь с условиями")
-                .font(.system(size: 13, weight: .regular))
+                .font(.system(size: 13))
                 .foregroundStyle(Color("ypBlack"))
             
             Button {
                 showingAgreement = true
             } label: {
                 Text("Пользовательского соглашения")
-                    .font(.system(size: 13, weight: .regular))
+                    .font(.system(size: 13))
                     .foregroundStyle(Color("ypUBlue"))
             }
         }
@@ -92,15 +126,43 @@ struct PaymentView: View {
     
     private var payButton: some View {
         Button {
-            // TODO: - Обработка оплаты
+            Task {
+                await viewModel.pay()
+            }
         } label: {
-            Text("Оплатить")
-                .font(.system(size: 17, weight: .bold))
-                .foregroundStyle(Color("ypWhite"))
-                .frame(maxWidth: .infinity)
-                .frame(height: 60)
-                .background(Color("ypBlack"))
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+            ZStack {
+                if viewModel.state == .loading {
+                    HStack(spacing: 8) {
+                        ProgressView()
+                            .tint(.ypWhite)
+                        Text("Оплата...")
+                            .font(.system(size: 17, weight: .bold))
+                    }
+                } else {
+                    Text("Оплатить")
+                        .font(.system(size: 17, weight: .bold))
+                }
+            }
+            .foregroundStyle(Color("ypWhite"))
+            .frame(maxWidth: .infinity)
+            .frame(height: 60)
+            .background(buttonBackgroundColor)
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .animation(.easeInOut(duration: 0.2), value: viewModel.state == .loading)
+        }
+        .disabled(
+            viewModel.selectedMethodID == nil ||
+            viewModel.state == .loading
+        )
+    }
+    
+    private var buttonBackgroundColor: Color {
+        if viewModel.selectedMethodID == nil {
+            return Color.gray
+        } else if viewModel.state == .loading {
+            return Color.gray
+        } else {
+            return Color("ypBlack")
         }
     }
     
@@ -120,13 +182,32 @@ struct PaymentView: View {
     private var backgroundView: Color {
         Color("ypWhite")
     }
+    
+    // MARK: - Private Methods
+    
+    private func handleStateChange(_ newState: PaymentViewModel.State) {
+        switch newState {
+        case .success:
+            showSuccess = true
+        case .error(let message):
+            errorMessage = message
+            // ✅ Автоматически скрываем ошибку через 3 секунды
+            errorMessageTimer?.invalidate()
+            errorMessageTimer = Timer.scheduledTimer(withTimeInterval: 3, repeats: false) { _ in
+                errorMessage = nil
+            }
+        default:
+            break
+        }
+    }
 }
-
-// MARK: - Preview
 
 #Preview {
     NavigationStack {
-        PaymentView()
+        PaymentView(
+            networkClient: DefaultNetworkClient(),
+            onSuccess: { }
+        )
     }
     .preferredColorScheme(.light)
 }

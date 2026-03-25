@@ -8,48 +8,31 @@
 import Foundation
 import Observation
 
-// MARK: - Constants
-
 private enum Constants {
-    /// Ключ для сохранения выбранного способа сортировки в UserDefaults
     static let selectedSortKey = "cart_selected_sort"
 }
-
-// MARK: - CartViewModel
 
 @Observable
 final class CartViewModel {
     
     // MARK: - Public Properties
     
-    /// Список товаров в корзине
     var items: [CartItem] = []
-    
-    /// Флаг первичной загрузки
+    var orderId: String = ""
     var isLoading = false
-    
-    /// Флаг обновления (pull-to-refresh)
     var isRefreshing = false
-    
-    /// Сообщение об ошибке, если произошла
     var errorMessage: String?
-    
-    /// Текущий выбранный способ сортировки
     var selectedSort: CartSortOption = .name
-    
-    /// Товар, ожидающий подтверждения удаления
     var itemPendingRemoval: CartItem?
-    
-    /// Флаг процесса удаления
     var isDeleting = false
     
     // MARK: - Private Properties
     
     private let cartService: CartServiceProtocol
+    private var loadTask: Task<Void, Never>?
     
     // MARK: - Computed Properties
     
-    /// Текущее состояние экрана на основе данных
     var state: CartViewState {
         if isLoading && items.isEmpty {
             return .loading
@@ -79,104 +62,108 @@ final class CartViewModel {
     
     // MARK: - Public Methods
     
-    /// Применить сортировку к списку товаров
-    /// - Parameter option: Выбранный способ сортировки
     @MainActor
     func applySort(_ option: CartSortOption) {
         selectedSort = option
-        
-        UserDefaults.standard.set(
-            option.rawValue,
-            forKey: Constants.selectedSortKey
-        )
-        
+        UserDefaults.standard.set(option.rawValue, forKey: Constants.selectedSortKey)
         items = sortedItems(items, by: option)
     }
     
-    /// Загрузить товары в корзину
     @MainActor
     func load() async {
         guard items.isEmpty else { return }
         
-        isLoading = true
-        errorMessage = nil
+        // ✅ Отменяем предыдущую загрузку
+        loadTask?.cancel()
         
-        defer { isLoading = false }
-        
-        do {
-            let loadedItems = try await cartService.loadCartItems()
-            items = sortedItems(loadedItems, by: selectedSort)
-        } catch {
-            errorMessage = "Не удалось загрузить корзину"
-            print("Cart load error: \(error)")
+        loadTask = Task {
+            isLoading = true
+            errorMessage = nil
+            
+            defer { isLoading = false }
+            
+            do {
+                let (loadedItems, loadedOrderId) = try await cartService.loadCartItems()
+                try Task.checkCancellation()  // ✅ Проверяем отмену
+                items = sortedItems(loadedItems, by: selectedSort)
+                orderId = loadedOrderId
+                print("📦 Cart loaded, orderId: \(orderId)")
+            } catch is CancellationError {
+                print("Cart loading cancelled")
+            } catch {
+                errorMessage = "Не удалось загрузить корзину"
+                print("Cart load error: \(error)")
+            }
         }
+        
+        await loadTask?.value
     }
     
-    /// Обновить список товаров (pull-to-refresh)
     @MainActor
     func refresh() async {
         guard !isRefreshing else { return }
         
         isRefreshing = true
-        
         defer { isRefreshing = false }
         
         do {
-            let updatedItems = try await cartService.loadCartItems()
+            let (updatedItems, updatedOrderId) = try await cartService.loadCartItems()
             items = sortedItems(updatedItems, by: selectedSort)
+            orderId = updatedOrderId
             errorMessage = nil
+            print("📦 Cart refreshed, orderId: \(orderId)")
         } catch {
             print("Cart refresh error: \(error)")
         }
     }
     
-    /// Обработчик нажатия на кнопку удаления
-    /// - Parameter item: Товар для удаления
     @MainActor
     func didTapRemove(on item: CartItem) {
         itemPendingRemoval = item
     }
     
-    /// Отмена удаления
     @MainActor
     func cancelRemoval() {
         itemPendingRemoval = nil
     }
     
-    /// Подтверждение удаления
     @MainActor
     func confirmRemoval() async {
         guard let item = itemPendingRemoval else { return }
         
+        // Оптимистичное обновление UI
+        let oldItems = items
+        items.removeAll { $0.id == item.id }
+        itemPendingRemoval = nil
         isDeleting = true
         
-        defer { isDeleting = false }
-        
         do {
-            let updatedItems = try await cartService.removeItem(id: item.id)
+            // ✅ Получаем обновленные данные с сервера
+            let (updatedItems, updatedOrderId) = try await cartService.removeItem(id: item.id)
+            
+            // ✅ Синхронизируем с сервером
             items = sortedItems(updatedItems, by: selectedSort)
-            itemPendingRemoval = nil
+            orderId = updatedOrderId
+            errorMessage = nil
+            print("🗑️ Item removed, new orderId: \(orderId)")
         } catch {
+            // ✅ Откат при ошибке
+            items = oldItems
             errorMessage = "Не удалось удалить товар"
             print("Cart remove error: \(error)")
         }
+        
+        isDeleting = false
     }
     
     // MARK: - Private Methods
     
-    /// Отсортировать товары по выбранному критерию
-    /// - Parameters:
-    ///   - items: Исходный массив товаров
-    ///   - option: Критерий сортировки
-    /// - Returns: Отсортированный массив
     private func sortedItems(_ items: [CartItem], by option: CartSortOption) -> [CartItem] {
         switch option {
         case .price:
             return items.sorted { $0.price < $1.price }
-            
         case .rating:
             return items.sorted { $0.rating > $1.rating }
-            
         case .name:
             return items.sorted {
                 $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending

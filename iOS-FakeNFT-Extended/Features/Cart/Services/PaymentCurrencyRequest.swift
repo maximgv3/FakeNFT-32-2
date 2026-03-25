@@ -5,14 +5,17 @@
 //  Created by Рустам Ханахмедов on 25.03.2026.
 //
 
-import SwiftUI
+import Foundation
 
-struct PaymentCurrencyRequest: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+/// Запрос на оплату заказа выбранной валютой
+struct PaymentCurrencyRequest: NetworkRequest {
+    let currencyId: String
+    
+    var httpMethod: HttpMethod { .get }
+    
+    var endpoint: URL? {
+        URL(string: "\(RequestConstants.baseURL)/api/v1/orders/1/payment/\(currencyId)")
     }
-}
-
-#Preview {
-    PaymentCurrencyRequest()
+    
+    var dto: Data? { nil }
 }

@@ -5,14 +5,20 @@
 //  Created by Рустам Ханахмедов on 24.03.2026.
 //
 
-import SwiftUI
+import Foundation
 
-struct CurrenciesRequest: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+struct CurrenciesRequest: NetworkRequest {
+    var endpoint: URL? {
+        URL(string: "\(RequestConstants.baseURL)/api/v1/currencies")
     }
+    
+    var httpMethod: HttpMethod { .get }
 }
 
-#Preview {
-    CurrenciesRequest()
+// Модель для ответа от сервера
+struct CurrencyResponse: Decodable {
+    let id: String
+    let title: String
+    let name: String  // Это будет code
+    let image: String // Не используем, но нужно для декодирования
 }
