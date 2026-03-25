@@ -20,6 +20,7 @@ struct CollectionDetailView: View {
         .ignoresSafeArea(edges: .top)
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .navigationBar)
+        .toolbar(.hidden, for: .tabBar)
         .overlay(alignment: .topLeading) {
             backButton
                 .padding(.leading, Constants.backButtonLeadingPadding)
@@ -52,10 +53,10 @@ struct CollectionDetailView: View {
                 .font(.system(size: 22, weight: .bold))
                 .kerning(0.35)
                 .foregroundStyle(Color.ypBlack)
-                .frame(minHeight: Constants.titleLineHeight, alignment: .center)
+                .frame(minHeight: Constants.titleLineHeight)
 
             authorLine
-                .frame(minHeight: Constants.authorLineHeight, alignment: .center)
+                .frame(minHeight: Constants.authorLineHeight)
                 .padding(.top, Constants.authorTopPadding)
 
             Text(collection.description.capitalizedFirst)
@@ -126,7 +127,7 @@ private extension CollectionDetailView {
 
 private extension String {
     var capitalizedFirst: String {
-        guard let first = first else { return self }
+        guard let first else { return self }
         return first.uppercased() + dropFirst()
     }
 }

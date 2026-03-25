@@ -4,8 +4,8 @@ enum SortOption: Equatable {
 
     var title: String {
         switch self {
-        case .byName: return "По названию"
-        case .byNFTCount: return "По количеству NFT"
+        case .byName: "По названию"
+        case .byNFTCount: "По количеству NFT"
         }
     }
 }

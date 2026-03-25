@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		4524E0992F61C51000843716 /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4524E0982F61C50A00843716 /* WebView.swift */; };
+		8403828D2F73EB8C00AD4A3A /* UserDefaultsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8403828C2F73EB8A00AD4A3A /* UserDefaultsService.swift */; };
 		84DA68822F641B2A001FBB40 /* CatalogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DA68812F641B28001FBB40 /* CatalogView.swift */; };
 		84DA68842F641B87001FBB40 /* Catalogcollectioncell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DA68832F641B82001FBB40 /* Catalogcollectioncell.swift */; };
 		84DA68862F642524001FBB40 /* Nftcollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DA68852F642522001FBB40 /* Nftcollection.swift */; };
@@ -54,6 +55,7 @@
 
 /* Begin PBXFileReference section */
 		4524E0982F61C50A00843716 /* WebView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebView.swift; sourceTree = "<group>"; };
+		8403828C2F73EB8A00AD4A3A /* UserDefaultsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsService.swift; sourceTree = "<group>"; };
 		84DA68812F641B28001FBB40 /* CatalogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogView.swift; sourceTree = "<group>"; };
 		84DA68832F641B82001FBB40 /* Catalogcollectioncell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Catalogcollectioncell.swift; sourceTree = "<group>"; };
 		84DA68852F642522001FBB40 /* Nftcollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Nftcollection.swift; sourceTree = "<group>"; };
@@ -110,6 +112,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8403828B2F73EB7E00AD4A3A /* Service */ = {
+			isa = PBXGroup;
+			children = (
+				8403828C2F73EB8A00AD4A3A /* UserDefaultsService.swift */,
+			);
+			path = Service;
+			sourceTree = "<group>";
+		};
 		84DA688B2F64268E001FBB40 /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
@@ -262,6 +272,7 @@
 		F1243B672F5C59E60049A796 /* Catalog */ = {
 			isa = PBXGroup;
 			children = (
+				8403828B2F73EB7E00AD4A3A /* Service */,
 				84DA68902F6ABD09001FBB40 /* Sort */,
 				84DA688B2F64268E001FBB40 /* ViewModel */,
 				F1243B662F5C59E60049A796 /* View */,
@@ -422,6 +433,7 @@
 				F1243B862F5C5AEE0049A796 /* NftStorage.swift in Sources */,
 				F1243B832F5C5AE10049A796 /* ExampleRequest.swift in Sources */,
 				F1243B962F5C5B3A0049A796 /* NftDetailCellModel.swift in Sources */,
+				8403828D2F73EB8C00AD4A3A /* UserDefaultsService.swift in Sources */,
 				F1243B8A2F5C5AFF0049A796 /* LoadingView.swift in Sources */,
 				84DA68842F641B87001FBB40 /* Catalogcollectioncell.swift in Sources */,
 				F1243B822F5C5ADD0049A796 /* NetworkClient.swift in Sources */,
