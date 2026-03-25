@@ -6,16 +6,27 @@ struct CollectionDetailView: View {
     // MARK: - Properties
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(ServicesAssembly.self) private var servicesAssembly
+    @State private var viewModel: CollectionDetailViewModel?
     @State private var isAuthorWebViewPresented = false
     let collection: NftCollection
 
     // MARK: - Body
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 0) {
-                coverSection
-                infoSection
+        ZStack {
+            ScrollView {
+                VStack(spacing: 0) {
+                    coverSection
+                    infoSection
+                    if let viewModel {
+                        nftSection(viewModel: viewModel)
+                    }
+                }
+            }
+
+            if viewModel?.isLoading == true {
+                ProgressView()
             }
         }
         .ignoresSafeArea(edges: .top)
@@ -31,6 +42,30 @@ struct CollectionDetailView: View {
             if let url = authorURL {
                 WebView(url: url)
             }
+        }
+        .task {
+            if viewModel == nil {
+                viewModel = CollectionDetailViewModel(
+                    collection: collection,
+                    collectionDetailService: servicesAssembly.collectionDetailService
+                )
+            }
+            await viewModel?.loadNfts()
+        }
+        .alert(
+            NSLocalizedString("Error.title", comment: ""),
+            isPresented: Binding(
+                get: { viewModel?.showError ?? false },
+                set: { viewModel?.showError = $0 }
+            )
+        ) {
+            Button(NSLocalizedString("Error.repeat", comment: "")) {
+                Task {
+                    await viewModel?.loadNfts()
+                }
+            }
+        } message: {
+            Text(NSLocalizedString("Error.network", comment: ""))
         }
     }
 
@@ -74,6 +109,11 @@ struct CollectionDetailView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, Constants.horizontalPadding)
         .padding(.top, Constants.infoTopPadding)
+    }
+
+    private func nftSection(viewModel: CollectionDetailViewModel) -> some View {
+        Text("NFT count: \(viewModel.nfts.count)")
+            .padding(.top, Constants.infoTopPadding)
     }
 
     private var authorLine: some View {
