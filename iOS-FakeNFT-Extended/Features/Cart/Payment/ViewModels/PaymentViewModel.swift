@@ -92,21 +92,21 @@ final class PaymentViewModel {
             
             print("💰 Order contains: \(order.nfts.count) items")
             
-            // 2️⃣ Оплата выбранной валютой
+            // 2️⃣ Выбор валюты (GET /payment/{id})
             let paymentRequest = PaymentCurrencyRequest(currencyId: methodID)
             let paymentResponse: PaymentResponse = try await networkClient.send(request: paymentRequest)
             
             if paymentResponse.success {
-                print("💰 Payment successful with currency: \(paymentResponse.id)")
+                print("💰 Currency selected: \(paymentResponse.id)")
                 
-                // 3️⃣ Очистка корзины
-                let clearRequest = ClearCartRequest()
-                let clearedOrder: Order = try await networkClient.send(request: clearRequest)
+                // 3️⃣ ВЫПОЛНЕНИЕ ЗАКАЗА (POST с nfts)
+                let executeRequest = ExecuteOrderRequest(nfts: order.nfts)
+                let _: Order = try await networkClient.send(request: executeRequest)
                 
-                print("🗑️ Cart cleared, orderId: \(clearedOrder.id)")
+                print("✅ Order executed and cart cleared")
                 state = .success
             } else {
-                state = .error("Ошибка оплаты")
+                state = .error("Ошибка выбора валюты")
             }
             
         } catch let error as NetworkClientError {
