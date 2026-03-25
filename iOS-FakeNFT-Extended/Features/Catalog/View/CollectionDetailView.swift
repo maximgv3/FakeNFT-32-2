@@ -6,6 +6,7 @@ struct CollectionDetailView: View {
     // MARK: - Properties
 
     @Environment(\.dismiss) private var dismiss
+    @State private var isAuthorWebViewPresented = false
     let collection: NftCollection
 
     // MARK: - Body
@@ -25,6 +26,11 @@ struct CollectionDetailView: View {
             backButton
                 .padding(.leading, Constants.backButtonLeadingPadding)
                 .padding(.top, Constants.backButtonTopPadding)
+        }
+        .navigationDestination(isPresented: $isAuthorWebViewPresented) {
+            if let url = authorURL {
+                WebView(url: url)
+            }
         }
     }
 
@@ -71,15 +77,20 @@ struct CollectionDetailView: View {
     }
 
     private var authorLine: some View {
-        HStack(spacing: 0) {
-            Text("Автор коллекции: ")
-                .font(.system(size: 13))
-                .kerning(-0.08)
-                .foregroundStyle(Color.ypBlack)
-            Text(collection.author)
-                .font(.system(size: 15))
-                .foregroundStyle(Color.ypUBlue)
+        Button {
+            isAuthorWebViewPresented = true
+        } label: {
+            HStack(spacing: 0) {
+                Text("Автор коллекции: ")
+                    .font(.system(size: 13))
+                    .kerning(-0.08)
+                    .foregroundStyle(Color.ypBlack)
+                Text(collection.author)
+                    .font(.system(size: 15))
+                    .foregroundStyle(Color.ypUBlue)
+            }
         }
+        .buttonStyle(.plain)
     }
 
     private var backButton: some View {
@@ -102,6 +113,13 @@ struct CollectionDetailView: View {
             withAllowedCharacters: .urlQueryAllowed
         )
         return URL(string: encoded ?? collection.cover)
+    }
+
+    private var authorURL: URL? {
+        let encoded = collection.website.addingPercentEncoding(
+            withAllowedCharacters: .urlQueryAllowed
+        )
+        return URL(string: encoded ?? collection.website)
     }
 }
 

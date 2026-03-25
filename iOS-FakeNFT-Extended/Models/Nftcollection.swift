@@ -7,6 +7,7 @@ struct NftCollection: Codable, Sendable {
     let nfts: [String]
     let description: String
     let author: String
+    let website: String
 
     var nftCount: Int {
         nfts.count
