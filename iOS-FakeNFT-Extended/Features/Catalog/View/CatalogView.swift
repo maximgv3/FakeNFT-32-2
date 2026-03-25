@@ -6,7 +6,6 @@ struct CatalogView: View {
 
     @Environment(ServicesAssembly.self) var servicesAssembly
     @State private var viewModel: CatalogViewModel?
-    @State private var showingSortSheet = false
 
     // MARK: - Body
 
@@ -47,6 +46,31 @@ struct CatalogView: View {
             } message: {
                 Text(NSLocalizedString("Error.network", comment: ""))
             }
+            .fullScreenCover(isPresented: Binding(
+                get: { viewModel?.isSortSheetPresented ?? false },
+                set: { viewModel?.isSortSheetPresented = $0 }
+            )) {
+                ZStack(alignment: .bottom) {
+                    Color.black
+                        .opacity(Constants.dimOpacity)
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            viewModel?.isSortSheetPresented = false
+                        }
+
+                    CatalogSortView(
+                        isPresented: Binding(
+                            get: { viewModel?.isSortSheetPresented ?? false },
+                            set: { viewModel?.isSortSheetPresented = $0 }
+                        ),
+                        selectedSortOption: Binding(
+                            get: { viewModel?.selectedSortOption },
+                            set: { viewModel?.selectedSortOption = $0 }
+                        )
+                    )
+                }
+                .presentationBackground(.clear)
+            }
         }
     }
 
@@ -56,7 +80,7 @@ struct CatalogView: View {
         ScrollView {
             LazyVStack(spacing: Constants.cellSpacing) {
                 if let viewModel {
-                    ForEach(viewModel.collections, id: \.id) { collection in
+                    ForEach(viewModel.sortedCollections, id: \.id) { collection in
                         NavigationLink(destination: CollectionDetailView(collection: collection)) {
                             CatalogCollectionCell(
                                 name: collection.name,
@@ -75,7 +99,7 @@ struct CatalogView: View {
 
     private var sortButton: some View {
         Button {
-            showingSortSheet = true
+            viewModel?.isSortSheetPresented = true
         } label: {
             Image(.sort)
                 .resizable()
@@ -105,5 +129,6 @@ private extension CatalogView {
         static let horizontalPadding: CGFloat = 16
         static let topPadding: CGFloat = 20
         static let cellSpacing: CGFloat = 21
+        static let dimOpacity: Double = 0.5
     }
 }
