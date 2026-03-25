@@ -19,14 +19,15 @@ actor CartServiceImpl: CartServiceProtocol {
         self.nftService = nftService
     }
     
-    func loadCartItems() async throws -> [CartItem] {
+    func loadCartItems() async throws -> ([CartItem], orderId: String) {
         let order: Order = try await networkClient.send(request: OrderRequest())
+        print("📦 Loaded order: \(order)")
         
         guard !order.nfts.isEmpty else {
-            return []
+            return ([], order.id)
         }
         
-        return try await withThrowingTaskGroup(of: (Int, CartItem).self) { group in
+        let items = try await withThrowingTaskGroup(of: (Int, CartItem).self) { group in
             for (index, nftId) in order.nfts.enumerated() {
                 group.addTask { [nftService] in
                     let nft = try await nftService.loadNft(id: nftId)
@@ -45,46 +46,51 @@ actor CartServiceImpl: CartServiceProtocol {
                 .sorted { $0.0 < $1.0 }
                 .map(\.1)
         }
+        
+        return (items, order.id)
     }
     
-    func removeItem(id: String) async throws -> [CartItem] {
-            let order: Order = try await networkClient.send(request: OrderRequest())
-
-            var updatedIds = order.nfts
-            if let index = updatedIds.firstIndex(of: id) {
-                updatedIds.remove(at: index)
-            }
-
-            let updatedOrder: Order = try await networkClient.send(
-                request: UpdateOrderRequest(nfts: updatedIds)
-            )
-
-            return try await makeCartItems(from: updatedOrder.nfts)
-        }
+    func removeItem(id: String) async throws -> ([CartItem], orderId: String) {
+        // Получаем текущий заказ
+        let currentOrder: Order = try await networkClient.send(request: OrderRequest())
+        let updatedIds = currentOrder.nfts.filter { $0 != id }
+        
+        // ✅ Отправляем запрос на обновление ВСЕГДА
+        // Если updatedIds пустой — UpdateOrderRequest отправит пустое тело
+        let updatedOrder: Order = try await networkClient.send(
+            request: UpdateOrderRequest(nfts: updatedIds)
+        )
+        
+        print("🔄 Removed item \(id), orderId: \(updatedOrder.id)")
+        
+        // Создаем CartItems из обновленного списка ID
+        let items = try await makeCartItems(from: updatedIds)
+        return (items, updatedOrder.id)
+    }
     
     private func makeCartItems(from ids: [String]) async throws -> [CartItem] {
-            guard !ids.isEmpty else { return [] }
-
-            return try await withThrowingTaskGroup(of: (Int, CartItem).self) { group in
-                for (index, nftId) in ids.enumerated() {
-                    group.addTask { [nftService] in
-                        let nft = try await nftService.loadNft(id: nftId)
-                        return (index, Self.makeCartItem(from: nft))
-                    }
+        guard !ids.isEmpty else { return [] }
+        
+        return try await withThrowingTaskGroup(of: (Int, CartItem).self) { group in
+            for (index, nftId) in ids.enumerated() {
+                group.addTask { [nftService] in
+                    let nft = try await nftService.loadNft(id: nftId)
+                    return (index, Self.makeCartItem(from: nft))
                 }
-
-                var indexedItems: [(Int, CartItem)] = []
-                indexedItems.reserveCapacity(ids.count)
-
-                for try await indexedItem in group {
-                    indexedItems.append(indexedItem)
-                }
-
-                return indexedItems
-                    .sorted { $0.0 < $1.0 }
-                    .map(\.1)
             }
+            
+            var indexedItems: [(Int, CartItem)] = []
+            indexedItems.reserveCapacity(ids.count)
+            
+            for try await indexedItem in group {
+                indexedItems.append(indexedItem)
+            }
+            
+            return indexedItems
+                .sorted { $0.0 < $1.0 }
+                .map(\.1)
         }
+    }
     
     private static func makeCartItem(from nft: Nft) -> CartItem {
         CartItem(

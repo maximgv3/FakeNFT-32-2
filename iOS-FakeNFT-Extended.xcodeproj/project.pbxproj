@@ -50,6 +50,14 @@
 		F1243BDA2F5EC5BB0049A796 /* CartItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1243BCC2F5EC5BB0049A796 /* CartItem.swift */; };
 		F15E649C2F6AEB23003C8283 /* BarsVisibilityModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15E649B2F6AEB23003C8283 /* BarsVisibilityModifier.swift */; };
 		F15E649F2F6B60D9003C8283 /* SkeletonBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15E649E2F6B60D9003C8283 /* SkeletonBlock.swift */; };
+		F15E64A12F716212003C8283 /* PaymentViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15E64A02F716212003C8283 /* PaymentViewModel.swift */; };
+		F15E64A52F7163A5003C8283 /* PaymentResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15E64A42F7163A5003C8283 /* PaymentResponse.swift */; };
+		F15E64A72F721C19003C8283 /* PaymentSuccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15E64A62F721C19003C8283 /* PaymentSuccessView.swift */; };
+		F15E64AF2F72BEA3003C8283 /* CurrenciesRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15E64AE2F72BEA3003C8283 /* CurrenciesRequest.swift */; };
+		F15E64B72F72D93A003C8283 /* Dictionary+Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15E64B62F72D93A003C8283 /* Dictionary+Ext.swift */; };
+		F15E64BF2F73C05B003C8283 /* PaymentCurrencyRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15E64BE2F73C05B003C8283 /* PaymentCurrencyRequest.swift */; };
+		F15E64C12F73C06B003C8283 /* ClearCartRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15E64C02F73C06B003C8283 /* ClearCartRequest.swift */; };
+		F15E64C92F73EE62003C8283 /* ExecuteOrderRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15E64C82F73EE62003C8283 /* ExecuteOrderRequest.swift */; };
 		F17CCB8E2F60542B0069C181 /* CartViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F17CCB8D2F60542B0069C181 /* CartViewModel.swift */; };
 		F17CCB902F6055960069C181 /* CartViewState.swift in Sources */ = {isa = PBXBuildFile; fileRef = F17CCB8F2F6055960069C181 /* CartViewState.swift */; };
 		F17CCB922F618FA50069C181 /* Order.swift in Sources */ = {isa = PBXBuildFile; fileRef = F17CCB912F618FA50069C181 /* Order.swift */; };
@@ -110,6 +118,14 @@
 		F1243BCC2F5EC5BB0049A796 /* CartItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartItem.swift; sourceTree = "<group>"; };
 		F15E649B2F6AEB23003C8283 /* BarsVisibilityModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarsVisibilityModifier.swift; sourceTree = "<group>"; };
 		F15E649E2F6B60D9003C8283 /* SkeletonBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkeletonBlock.swift; sourceTree = "<group>"; };
+		F15E64A02F716212003C8283 /* PaymentViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentViewModel.swift; sourceTree = "<group>"; };
+		F15E64A42F7163A5003C8283 /* PaymentResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentResponse.swift; sourceTree = "<group>"; };
+		F15E64A62F721C19003C8283 /* PaymentSuccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentSuccessView.swift; sourceTree = "<group>"; };
+		F15E64AE2F72BEA3003C8283 /* CurrenciesRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrenciesRequest.swift; sourceTree = "<group>"; };
+		F15E64B62F72D93A003C8283 /* Dictionary+Ext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Dictionary+Ext.swift"; sourceTree = "<group>"; };
+		F15E64BE2F73C05B003C8283 /* PaymentCurrencyRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentCurrencyRequest.swift; sourceTree = "<group>"; };
+		F15E64C02F73C06B003C8283 /* ClearCartRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClearCartRequest.swift; sourceTree = "<group>"; };
+		F15E64C82F73EE62003C8283 /* ExecuteOrderRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExecuteOrderRequest.swift; sourceTree = "<group>"; };
 		F17CCB8D2F60542B0069C181 /* CartViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartViewModel.swift; sourceTree = "<group>"; };
 		F17CCB8F2F6055960069C181 /* CartViewState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartViewState.swift; sourceTree = "<group>"; };
 		F17CCB912F618FA50069C181 /* Order.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Order.swift; sourceTree = "<group>"; };
@@ -411,6 +427,7 @@
 		F1243BD12F5EC5BB0049A796 /* Success */ = {
 			isa = PBXGroup;
 			children = (
+				F15E64A62F721C19003C8283 /* PaymentSuccessView.swift */,
 			);
 			path = Success;
 			sourceTree = "<group>";
@@ -423,6 +440,12 @@
 				F17CCB982F6191FE0069C181 /* CartServiceImpl.swift */,
 				F17CCB9A2F61945F0069C181 /* MockCartService.swift */,
 				F17CCBAB2F65962C0069C181 /* UpdateOrderRequest.swift */,
+				F15E64A42F7163A5003C8283 /* PaymentResponse.swift */,
+				F15E64AE2F72BEA3003C8283 /* CurrenciesRequest.swift */,
+				F15E64B62F72D93A003C8283 /* Dictionary+Ext.swift */,
+				F15E64BE2F73C05B003C8283 /* PaymentCurrencyRequest.swift */,
+				F15E64C02F73C06B003C8283 /* ClearCartRequest.swift */,
+				F15E64C82F73EE62003C8283 /* ExecuteOrderRequest.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -481,6 +504,7 @@
 		F17CCBB22F672EB30069C181 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				F15E64A02F716212003C8283 /* PaymentViewModel.swift */,
 			);
 			path = ViewModels;
 			sourceTree = "<group>";
@@ -574,14 +598,19 @@
 				F1243B902F5C5B1E0049A796 /* TestCatalogView.swift in Sources */,
 				F1243B802F5C5AD40049A796 /* Fonts.swift in Sources */,
 				F1243B912F5C5B240049A796 /* NftDetailBridgeView.swift in Sources */,
+				F15E64B72F72D93A003C8283 /* Dictionary+Ext.swift in Sources */,
 				F1243B952F5C5B350049A796 /* NftDetailInput.swift in Sources */,
+				F15E64C12F73C06B003C8283 /* ClearCartRequest.swift in Sources */,
 				F15E649F2F6B60D9003C8283 /* SkeletonBlock.swift in Sources */,
 				F1243B7F2F5C5AD00049A796 /* Colors.swift in Sources */,
 				F1243B882F5C5AF70049A796 /* UIView+Constraints.swift in Sources */,
+				F15E64BF2F73C05B003C8283 /* PaymentCurrencyRequest.swift in Sources */,
+				F15E64C92F73EE62003C8283 /* ExecuteOrderRequest.swift in Sources */,
 				F1243B942F5C5B310049A796 /* NftDetailAssembly.swift in Sources */,
 				F17CCBA82F62F8880069C181 /* RatingView.swift in Sources */,
 				F17CCB952F6191BF0069C181 /* OrderRequest.swift in Sources */,
 				F1243B7E2F5C5AC90049A796 /* TabBarView.swift in Sources */,
+				F15E64A52F7163A5003C8283 /* PaymentResponse.swift in Sources */,
 				F1243B862F5C5AEE0049A796 /* NftStorage.swift in Sources */,
 				F1243BD52F5EC5BB0049A796 /* CartListView.swift in Sources */,
 				F1243BD62F5EC5BB0049A796 /* CartView.swift in Sources */,
@@ -589,6 +618,7 @@
 				F1243BD82F5EC5BB0049A796 /* CartCell.swift in Sources */,
 				F17CCB8E2F60542B0069C181 /* CartViewModel.swift in Sources */,
 				F1243BD92F5EC5BB0049A796 /* CartEmptyStateView.swift in Sources */,
+				F15E64A12F716212003C8283 /* PaymentViewModel.swift in Sources */,
 				F1243BDA2F5EC5BB0049A796 /* CartItem.swift in Sources */,
 				F17CCBB92F672F550069C181 /* PaymentView.swift in Sources */,
 				F1243B832F5C5AE10049A796 /* ExampleRequest.swift in Sources */,
@@ -607,6 +637,8 @@
 				F17CCB972F6191E30069C181 /* CartService.swift in Sources */,
 				F1243B8C2F5C5B070049A796 /* LinePageControl.swift in Sources */,
 				F17CCBAC2F65962C0069C181 /* UpdateOrderRequest.swift in Sources */,
+				F15E64A72F721C19003C8283 /* PaymentSuccessView.swift in Sources */,
+				F15E64AF2F72BEA3003C8283 /* CurrenciesRequest.swift in Sources */,
 				F1243B972F5C5B3F0049A796 /* NftImageCollectionViewCell.swift in Sources */,
 				F17CCB922F618FA50069C181 /* Order.swift in Sources */,
 				F1243B872F5C5AF20049A796 /* CellsReusingUtils.swift in Sources */,

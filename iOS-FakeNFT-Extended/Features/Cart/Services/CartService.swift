@@ -8,6 +8,6 @@
 import Foundation
 
 protocol CartServiceProtocol: Sendable {
-    func loadCartItems() async throws -> [CartItem]
-    func removeItem(id: String) async throws -> [CartItem]
+    func loadCartItems() async throws -> ([CartItem], orderId: String)
+    func removeItem(id: String) async throws -> ([CartItem], orderId: String)
 }
