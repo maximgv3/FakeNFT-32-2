@@ -14,8 +14,8 @@ struct PaymentView: View {
     
     @State private var showingAgreement = false
     @State private var showSuccess = false
-    @State private var errorMessage: String?
-    @State private var errorMessageTimer: Timer?
+    @State private var showPaymentError = false
+    @State private var errorMessage = ""
     
     private let agreementURL = URL(string: "https://yandex.ru/legal/practicum_termsofuse/")!
     private let onSuccess: () -> Void
@@ -60,23 +60,32 @@ struct PaymentView: View {
                 onSuccess()
             }
         }
+        .alert(
+            "Не удалось произвести оплату",
+            isPresented: $showPaymentError,
+            actions: {
+                Button("Отмена", role: .cancel) {
+                    // Просто закрываем алерт, остаемся на экране оплаты
+                    showPaymentError = false
+                    viewModel.reset()
+                }
+                
+                Button("Повторить") {
+                    showPaymentError = false
+                    Task {
+                        await viewModel.retry()
+                    }
+                }
+            },
+            message: {
+                Text(errorMessage)
+            }
+        )
         .onChange(of: viewModel.state) { oldState, newState in
             handleStateChange(newState)
         }
         .onDisappear {
             viewModel.reset()
-            errorMessageTimer?.invalidate()
-        }
-        .alert(
-            "Ошибка",
-            isPresented: Binding(
-                get: { errorMessage != nil },
-                set: { _ in errorMessage = nil }
-            )
-        ) {
-            Button("OK", role: .cancel) { }
-        } message: {
-            Text(errorMessage ?? "")
         }
     }
     
@@ -191,11 +200,7 @@ struct PaymentView: View {
             showSuccess = true
         case .error(let message):
             errorMessage = message
-            // ✅ Автоматически скрываем ошибку через 3 секунды
-            errorMessageTimer?.invalidate()
-            errorMessageTimer = Timer.scheduledTimer(withTimeInterval: 3, repeats: false) { _ in
-                errorMessage = nil
-            }
+            showPaymentError = true
         default:
             break
         }

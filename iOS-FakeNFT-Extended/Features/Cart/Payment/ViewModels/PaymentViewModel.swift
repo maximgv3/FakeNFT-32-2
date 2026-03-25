@@ -63,7 +63,15 @@ final class PaymentViewModel {
             }
             
             if !result.isEmpty {
-                paymentMethods = result
+                // Сортируем в том же порядке, что и PaymentMethod.mock
+                let mockOrder = PaymentMethod.mock.map { $0.id }
+                paymentMethods = result.sorted { first, second in
+                    guard let firstIndex = mockOrder.firstIndex(of: first.id),
+                          let secondIndex = mockOrder.firstIndex(of: second.id) else {
+                        return false
+                    }
+                    return firstIndex < secondIndex
+                }
             }
             
         } catch {
@@ -103,7 +111,13 @@ final class PaymentViewModel {
                 let executeRequest = ExecuteOrderRequest(nfts: order.nfts)
                 let _: Order = try await networkClient.send(request: executeRequest)
                 
-                print("✅ Order executed and cart cleared")
+                print("✅ Order executed")
+                
+                // 4️⃣ ОЧИСТКА КОРЗИНЫ (PUT с пустым массивом)
+                let clearRequest = ClearCartRequest()
+                let clearedOrder: Order = try await networkClient.send(request: clearRequest)
+                
+                print("🗑️ Cart cleared, orderId: \(clearedOrder.id)")
                 state = .success
             } else {
                 state = .error("Ошибка выбора валюты")
