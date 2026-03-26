@@ -15,13 +15,19 @@ struct PaymentView: View {
     @State private var showingAgreement = false
     @State private var showSuccess = false
     
-    private let agreementURL = URL(string: "https://yandex.ru/legal/practicum_termsofuse/")!
+    private let agreementURLString = "https://yandex.ru/legal/practicum_termsofuse/"
     private let onSuccess: () -> Void
     
     private let columns: [GridItem] = [
         GridItem(.flexible(), spacing: 7),
         GridItem(.flexible(), spacing: 7)
     ]
+    
+    // MARK: - Computed Properties
+    
+    private var agreementURL: URL? {
+        URL(string: agreementURLString)
+    }
     
     // MARK: - Init
     
@@ -57,9 +63,14 @@ struct PaymentView: View {
             }
         }
         .navigationDestination(isPresented: $showingAgreement) {
-            WebView(url: agreementURL)
-                .navigationTitle("Пользовательское соглашение")
-                .navigationBarTitleDisplayMode(.inline)
+            if let url = agreementURL {
+                WebView(url: url)
+                    .navigationTitle("Пользовательское соглашение")
+                    .navigationBarTitleDisplayMode(.inline)
+            } else {
+                // fallback на случай, если URL невалидный
+                Text("Не удалось загрузить соглашение")
+            }
         }
         .alert(
             "Не удалось произвести оплату",
@@ -129,6 +140,7 @@ struct PaymentView: View {
                     .font(.system(size: 13))
                     .foregroundStyle(Color("ypUBlue"))
             }
+            .disabled(agreementURL == nil)  // блокируем кнопку, если URL невалидный
         }
     }
     
