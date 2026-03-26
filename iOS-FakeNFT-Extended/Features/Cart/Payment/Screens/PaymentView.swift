@@ -14,8 +14,6 @@ struct PaymentView: View {
     
     @State private var showingAgreement = false
     @State private var showSuccess = false
-    @State private var showPaymentError = false
-    @State private var errorMessage = ""
     
     private let agreementURL = URL(string: "https://yandex.ru/legal/practicum_termsofuse/")!
     private let onSuccess: () -> Void
@@ -43,16 +41,14 @@ struct PaymentView: View {
         .safeAreaInset(edge: .bottom) {
             footerView
         }
-        .background(backgroundView.ignoresSafeArea())
+        .background(Color("ypWhite").ignoresSafeArea())
         .navigationTitle("Выберите способ оплаты")
         .navigationBarTitleDisplayMode(.inline)
         .task {
             await viewModel.loadCurrencies()
         }
-        .navigationDestination(isPresented: $showingAgreement) {
-            WebView(url: agreementURL)
-                .navigationTitle("Пользовательское соглашение")
-                .navigationBarTitleDisplayMode(.inline)
+        .onChange(of: viewModel.isSuccess) { _, newValue in
+            showSuccess = newValue
         }
         .navigationDestination(isPresented: $showSuccess) {
             PaymentSuccessView {
@@ -60,32 +56,35 @@ struct PaymentView: View {
                 onSuccess()
             }
         }
+        .navigationDestination(isPresented: $showingAgreement) {
+            WebView(url: agreementURL)
+                .navigationTitle("Пользовательское соглашение")
+                .navigationBarTitleDisplayMode(.inline)
+        }
         .alert(
             "Не удалось произвести оплату",
-            isPresented: $showPaymentError,
+            isPresented: Binding(
+                get: { viewModel.errorMessage != nil },
+                set: { if !$0 { viewModel.resetError() } }
+            ),
             actions: {
                 Button("Отмена", role: .cancel) {
-                    // Просто закрываем алерт, остаемся на экране оплаты
-                    showPaymentError = false
-                    viewModel.reset()
+                    viewModel.resetError()
                 }
                 
                 Button("Повторить") {
-                    showPaymentError = false
                     Task {
                         await viewModel.retry()
                     }
                 }
             },
             message: {
-                Text(errorMessage)
+                Text(viewModel.errorMessage ?? "")
             }
         )
-        .onChange(of: viewModel.state) { oldState, newState in
-            handleStateChange(newState)
-        }
         .onDisappear {
             viewModel.reset()
+            showSuccess = false
         }
     }
     
@@ -140,7 +139,7 @@ struct PaymentView: View {
             }
         } label: {
             ZStack {
-                if viewModel.state == .loading {
+                if viewModel.isLoading {
                     HStack(spacing: 8) {
                         ProgressView()
                             .tint(.ypWhite)
@@ -157,21 +156,16 @@ struct PaymentView: View {
             .frame(height: 60)
             .background(buttonBackgroundColor)
             .clipShape(RoundedRectangle(cornerRadius: 16))
-            .animation(.easeInOut(duration: 0.2), value: viewModel.state == .loading)
+            .animation(.easeInOut(duration: 0.2), value: viewModel.isLoading)
         }
-        .disabled(
-            viewModel.selectedMethodID == nil ||
-            viewModel.state == .loading
-        )
+        .disabled(!viewModel.canPay)
     }
     
     private var buttonBackgroundColor: Color {
-        if viewModel.selectedMethodID == nil {
-            return Color.gray
-        } else if viewModel.state == .loading {
-            return Color.gray
-        } else {
+        if viewModel.canPay {
             return Color("ypBlack")
+        } else {
+            return Color.gray
         }
     }
     
@@ -186,24 +180,6 @@ struct PaymentView: View {
                 )
             )
             .ignoresSafeArea(edges: .bottom)
-    }
-    
-    private var backgroundView: Color {
-        Color("ypWhite")
-    }
-    
-    // MARK: - Private Methods
-    
-    private func handleStateChange(_ newState: PaymentViewModel.State) {
-        switch newState {
-        case .success:
-            showSuccess = true
-        case .error(let message):
-            errorMessage = message
-            showPaymentError = true
-        default:
-            break
-        }
     }
 }
 

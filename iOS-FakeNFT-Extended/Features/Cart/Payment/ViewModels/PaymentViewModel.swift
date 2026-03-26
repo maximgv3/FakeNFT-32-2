@@ -24,6 +24,27 @@ final class PaymentViewModel {
     var selectedMethodID: String?
     var paymentMethods: [PaymentMethod] = PaymentMethod.mock
     
+    // MARK: - UI State (derived)
+    
+    var isLoading: Bool {
+        state == .loading
+    }
+    
+    var errorMessage: String? {
+        if case let .error(message) = state {
+            return message
+        }
+        return nil
+    }
+    
+    var isSuccess: Bool {
+        state == .success
+    }
+    
+    var canPay: Bool {
+        selectedMethodID != nil && state != .loading
+    }
+    
     // MARK: - Dependencies
     
     private let networkClient: NetworkClient
@@ -63,7 +84,6 @@ final class PaymentViewModel {
             }
             
             if !result.isEmpty {
-                // Сортируем в том же порядке, что и PaymentMethod.mock
                 let mockOrder = PaymentMethod.mock.map { $0.id }
                 paymentMethods = result.sorted { first, second in
                     guard let firstIndex = mockOrder.firstIndex(of: first.id),
@@ -90,7 +110,6 @@ final class PaymentViewModel {
         state = .loading
         
         do {
-            // 1️⃣ Получаем текущий заказ
             let order: Order = try await networkClient.send(request: OrderRequest())
             
             guard !order.nfts.isEmpty else {
@@ -100,20 +119,17 @@ final class PaymentViewModel {
             
             print("💰 Order contains: \(order.nfts.count) items")
             
-            // 2️⃣ Выбор валюты (GET /payment/{id})
             let paymentRequest = PaymentCurrencyRequest(currencyId: methodID)
             let paymentResponse: PaymentResponse = try await networkClient.send(request: paymentRequest)
             
             if paymentResponse.success {
                 print("💰 Currency selected: \(paymentResponse.id)")
                 
-                // 3️⃣ ВЫПОЛНЕНИЕ ЗАКАЗА (POST с nfts)
                 let executeRequest = ExecuteOrderRequest(nfts: order.nfts)
                 let _: Order = try await networkClient.send(request: executeRequest)
                 
                 print("✅ Order executed")
                 
-                // 4️⃣ ОЧИСТКА КОРЗИНЫ (PUT с пустым массивом)
                 let clearRequest = ClearCartRequest()
                 let clearedOrder: Order = try await networkClient.send(request: clearRequest)
                 
@@ -133,6 +149,12 @@ final class PaymentViewModel {
     func retry() async {
         state = .idle
         await pay()
+    }
+    
+    func resetError() {
+        if case .error = state {
+            state = .idle
+        }
     }
     
     func reset() {
