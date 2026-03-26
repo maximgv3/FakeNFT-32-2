@@ -21,6 +21,7 @@
 		4524E0A42F61EB2900843716 /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4524E0A32F61EB2400843716 /* ProfileViewModel.swift */; };
 		452E9C1E2F7494FE00718DB7 /* FavoriteNFTsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 452E9C1D2F7494F600718DB7 /* FavoriteNFTsViewModel.swift */; };
 		45712A902F69D88C0055589E /* RatingStars.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45712A8F2F69D8830055589E /* RatingStars.swift */; };
+		45DEF4E32F75CF7D0002EB01 /* ErrorMessageMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45DEF4E22F75CF7C0002EB01 /* ErrorMessageMapper.swift */; };
 		45E1AEF72F6DA43C002630B0 /* UpdateProfileRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45E1AEF62F6DA437002630B0 /* UpdateProfileRequest.swift */; };
 		45E1AEFA2F6DBC7D002630B0 /* ProfileEditViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45E1AEF92F6DBC72002630B0 /* ProfileEditViewModel.swift */; };
 		ABC5E1D82C3204A9002B4068 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = ABC5E1D72C3204A9002B4068 /* Kingfisher */; };
@@ -74,6 +75,7 @@
 		4524E0A32F61EB2400843716 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		452E9C1D2F7494F600718DB7 /* FavoriteNFTsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteNFTsViewModel.swift; sourceTree = "<group>"; };
 		45712A8F2F69D8830055589E /* RatingStars.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingStars.swift; sourceTree = "<group>"; };
+		45DEF4E22F75CF7C0002EB01 /* ErrorMessageMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorMessageMapper.swift; sourceTree = "<group>"; };
 		45E1AEF62F6DA437002630B0 /* UpdateProfileRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateProfileRequest.swift; sourceTree = "<group>"; };
 		45E1AEF82F6DB7B9002630B0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		45E1AEF92F6DBC72002630B0 /* ProfileEditViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileEditViewModel.swift; sourceTree = "<group>"; };
@@ -128,6 +130,7 @@
 		45168AD22F618B7200CACD7B /* Profile */ = {
 			isa = PBXGroup;
 			children = (
+				45DEF4E12F75CF6D0002EB01 /* Helpers */,
 				4524E0A32F61EB2400843716 /* ProfileViewModel.swift */,
 				45E1AEF92F6DBC72002630B0 /* ProfileEditViewModel.swift */,
 				452E9C1D2F7494F600718DB7 /* FavoriteNFTsViewModel.swift */,
@@ -146,6 +149,14 @@
 				4524E0962F61BCBF00843716 /* ProfileEditView.swift */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		45DEF4E12F75CF6D0002EB01 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				45DEF4E22F75CF7C0002EB01 /* ErrorMessageMapper.swift */,
+			);
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 		ABC5E15F2C31F5AF002B4068 = {
@@ -450,6 +461,7 @@
 				F1243B962F5C5B3A0049A796 /* NftDetailCellModel.swift in Sources */,
 				452E9C1E2F7494FE00718DB7 /* FavoriteNFTsViewModel.swift in Sources */,
 				4524E09B2F61E4AE00843716 /* Profile.swift in Sources */,
+				45DEF4E32F75CF7D0002EB01 /* ErrorMessageMapper.swift in Sources */,
 				4505DB952F6B2867000FE1F4 /* UserDefaultsService.swift in Sources */,
 				F1243B8A2F5C5AFF0049A796 /* LoadingView.swift in Sources */,
 				4524E09D2F61E83400843716 /* NFTRequest.swift in Sources */,

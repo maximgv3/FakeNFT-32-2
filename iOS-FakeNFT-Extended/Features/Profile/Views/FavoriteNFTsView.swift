@@ -1,8 +1,10 @@
 import SwiftUI
 
 struct FavoriteNFTsView: View {
+    @Environment(\.dismiss) private var dismiss
     @State private var viewModel: FavoriteNFTsViewModel
     @Binding var nftIds: [String]
+    @State private var isFavoriteActionInProgress = false
     let onRemoveFromFavorites: (String) async -> Void
 
     init(
@@ -23,9 +25,25 @@ struct FavoriteNFTsView: View {
                 grid()
                     .padding(.horizontal, 16)
                     .padding(.top, 20)
+
+            if isFavoriteActionInProgress {
+                progressOverlay
+            }
         }
         .navigationTitle("Избранные NFT")
+        .navigationBarBackButtonHidden(true)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 17, weight: .medium))
+                        .foregroundStyle(.ypBlack)
+                }
+            }
+        }
         .task {
             await viewModel.loadNFTs(ids: nftIds)
         }
@@ -34,11 +52,29 @@ struct FavoriteNFTsView: View {
                 await viewModel.loadNFTs(ids: newValue)
             }
         }
+        .allowsHitTesting(!isFavoriteActionInProgress)
     }
 
     private func removeNftLike(forId id: String) {
+        guard !isFavoriteActionInProgress else { return }
+
         Task {
+            isFavoriteActionInProgress = true
+            defer { isFavoriteActionInProgress = false }
             await onRemoveFromFavorites(id)
+        }
+    }
+
+    private var progressOverlay: some View {
+        ZStack {
+            Color.black.opacity(0.08)
+                .ignoresSafeArea()
+
+            ProgressView()
+                .tint(.ypBlack)
+                .padding(24)
+                .background(.ultraThinMaterial)
+                .clipShape(RoundedRectangle(cornerRadius: 16))
         }
     }
 
@@ -132,24 +168,6 @@ struct FavoriteNFTsView: View {
             }
     }
 
-}
-
-struct MockNftService: NftService {
-    func loadNft(id: String) async throws -> Nft {
-        Nft(
-            createdAt: "2026-03-26T00:00:00Z",
-            name: "Mock NFT \(id.prefix(4))",
-            images: [
-                "https://i.pinimg.com/736x/e2/b3/ff/e2b3ff329c3a6ce26afcd1c53d9de30a.jpg"
-            ],
-            rating: 4,
-            description: "Preview NFT",
-            price: 10.0,
-            author: "Preview Author",
-            website: "https://example.com",
-            id: id
-        )
-    }
 }
 
 #Preview {

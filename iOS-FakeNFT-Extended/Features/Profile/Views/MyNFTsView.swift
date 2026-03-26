@@ -2,8 +2,10 @@ import SwiftUI
 
 struct MyNFTsView: View {
 
+    @Environment(\.dismiss) private var dismiss
     @State private var viewModel: MyNFTsViewModel
     @State private var isSortDialogPresented = false
+    @State private var isFavoriteActionInProgress = false
     private let favoriteIds: [String]
     private let onToggleFavorite: (String) async -> Void
     
@@ -26,11 +28,25 @@ struct MyNFTsView: View {
             } else {
                 nftListView
             }
+
+            if isFavoriteActionInProgress {
+                progressOverlay
+            }
         }
         .navigationTitle("Мои NFT")
+        .navigationBarBackButtonHidden(true)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar(.hidden, for: .tabBar)
         .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 17, weight: .medium))
+                        .foregroundStyle(.ypBlack)
+                }
+            }
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
                     isSortDialogPresented = true
@@ -57,6 +73,7 @@ struct MyNFTsView: View {
         .task {
             await viewModel.loadNFTs()
         }
+        .allowsHitTesting(!isFavoriteActionInProgress)
     }
 
     private var backgroundView: some View {
@@ -67,6 +84,19 @@ struct MyNFTsView: View {
     private var loadingView: some View {
         ProgressView()
             .tint(.ypBlack)
+    }
+
+    private var progressOverlay: some View {
+        ZStack {
+            Color.black.opacity(0.08)
+                .ignoresSafeArea()
+
+            ProgressView()
+                .tint(.ypBlack)
+                .padding(24)
+                .background(.ultraThinMaterial)
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+        }
     }
 
     private func emptyStateView(message: String) -> some View {
@@ -95,7 +125,11 @@ struct MyNFTsView: View {
             ZStack(alignment: .topTrailing) {
                 nftImageView(for: nft)
                 Button {
+                    guard !isFavoriteActionInProgress else { return }
+
                     Task {
+                        isFavoriteActionInProgress = true
+                        defer { isFavoriteActionInProgress = false }
                         await onToggleFavorite(nft.id)
                     }
                 } label: {

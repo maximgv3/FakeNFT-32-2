@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct ProfileView: View {
+    @Environment(\.dismiss) private var dismiss
     @Environment(ServicesAssembly.self) private var servicesAssembly
     @State private var viewModel: ProfileViewModel?
     
@@ -63,6 +64,8 @@ struct ProfileView: View {
                             await viewModel?.removeFavoriteNft(id: id)
                         }
                     )
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar(.hidden, for: .tabBar)
                 case .webView:
                     if let profileWebsiteURL {
                         WebView(url: profileWebsiteURL)
@@ -79,6 +82,11 @@ struct ProfileView: View {
                     )
                 }
                 await viewModel?.loadProfile()
+            }
+        }
+        .onChange(of: viewModel?.errorMessage) { _, newValue in
+            if let newValue, !newValue.isEmpty {
+                path = []
             }
         }
     }

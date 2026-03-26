@@ -26,26 +26,14 @@ final class ProfileViewModel {
 
         do {
             profile = try await profileService.loadProfile(id: id)
-        } catch let error as NetworkClientError {
-            switch error {
-            case .httpStatusCode(let code):
-                errorMessage = "HTTP error: \(code)"
-            case .urlRequestError(let error):
-                errorMessage = "Request error: \(error.localizedDescription)"
-            case .urlSessionError:
-                errorMessage = "URL session error"
-            case .parsingError:
-                errorMessage = "Parsing error"
-            case .incorrectRequest(let message):
-                errorMessage = "Incorrect request: \(message)"
-            }
         } catch {
-            errorMessage = error.localizedDescription
+            handleError(error)
         }
 
     }
     func toggleFavoriteNft(id: String) async {
         guard let profile else { return }
+
         if profile.likes.contains(id) {
             await removeFavoriteNft(id: id)
         } else {
@@ -54,51 +42,23 @@ final class ProfileViewModel {
     }
 
     func addFavoriteNft(id nftId: String) async {
-        guard let currentProfile = profile else { return }
-        guard !currentProfile.likes.contains(nftId) else { return }
-
-        errorMessage = nil
-
-        let updatedLikes = currentProfile.likes + [nftId]
-        let updatedProfile = Profile(
-            id: currentProfile.id,
-            name: currentProfile.name,
-            avatar: currentProfile.avatar,
-            description: currentProfile.description,
-            website: currentProfile.website,
-            nfts: currentProfile.nfts,
-            likes: updatedLikes
-        )
-
-        do {
-            profile = try await profileService.updateProfile(
-                id: id,
-                profile: updatedProfile
-            )
-        } catch let error as NetworkClientError {
-            switch error {
-            case .httpStatusCode(let code):
-                errorMessage = "HTTP error: \(code)"
-            case .urlRequestError(let error):
-                errorMessage = "Request error: \(error.localizedDescription)"
-            case .urlSessionError:
-                errorMessage = "URL session error"
-            case .parsingError:
-                errorMessage = "Parsing error"
-            case .incorrectRequest(let message):
-                errorMessage = "Incorrect request: \(message)"
-            }
-        } catch {
-            errorMessage = error.localizedDescription
-        }
+        await updateFavoriteNft(id: nftId, shouldLike: true)
     }
 
     func removeFavoriteNft(id nftId: String) async {
+        await updateFavoriteNft(id: nftId, shouldLike: false)
+    }
+
+    private func updateFavoriteNft(id nftId: String, shouldLike: Bool) async {
         guard let currentProfile = profile else { return }
+        guard shouldLike ? !currentProfile.likes.contains(nftId) : currentProfile.likes.contains(nftId) else { return }
 
         errorMessage = nil
 
-        let updatedLikes = currentProfile.likes.filter { $0 != nftId }
+        let updatedLikes = shouldLike
+            ? currentProfile.likes + [nftId]
+            : currentProfile.likes.filter { $0 != nftId }
+
         let updatedProfile = Profile(
             id: currentProfile.id,
             name: currentProfile.name,
@@ -109,26 +69,21 @@ final class ProfileViewModel {
             likes: updatedLikes
         )
 
+        await updateProfile(updatedProfile)
+    }
+
+    private func updateProfile(_ updatedProfile: Profile) async {
         do {
             profile = try await profileService.updateProfile(
                 id: id,
                 profile: updatedProfile
             )
-        } catch let error as NetworkClientError {
-            switch error {
-            case .httpStatusCode(let code):
-                errorMessage = "HTTP error: \(code)"
-            case .urlRequestError(let error):
-                errorMessage = "Request error: \(error.localizedDescription)"
-            case .urlSessionError:
-                errorMessage = "URL session error"
-            case .parsingError:
-                errorMessage = "Parsing error"
-            case .incorrectRequest(let message):
-                errorMessage = "Incorrect request: \(message)"
-            }
         } catch {
-            errorMessage = error.localizedDescription
+            handleError(error)
         }
+    }
+
+    private func handleError(_ error: Error) {
+        errorMessage = ErrorMessageMapper.message(from: error)
     }
 }

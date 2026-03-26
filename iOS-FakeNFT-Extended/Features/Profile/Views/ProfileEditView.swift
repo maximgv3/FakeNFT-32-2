@@ -132,8 +132,7 @@ struct ProfileEditView: View {
                 let savedProfile = try await viewModel.saveProfile()
                 onSave(savedProfile)
                 dismiss()
-            } catch {
-            }
+            } catch { }
         }
     }
 

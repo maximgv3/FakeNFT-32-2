@@ -73,7 +73,7 @@ final class MyNFTsViewModel {
 
             nfts = loadedNfts
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = ErrorMessageMapper.message(from: error)
         }
     }
 
