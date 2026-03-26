@@ -1,18 +1,24 @@
 import SwiftUI
 
 struct NftDetailBridgeView: UIViewControllerRepresentable {
-    typealias UIViewControllerType = NftDetailViewController
+    typealias UIViewControllerType = UIViewController  // Меняем на UIViewController
 
     @Environment(ServicesAssembly.self) var servicesAssembly
 
-    func makeUIViewController(context: Context) -> NftDetailViewController {
+    func makeUIViewController(context: Context) -> UIViewController {
         let assembly = NftDetailAssembly(servicesAssembler: servicesAssembly)
         let nftInput = NftDetailInput(id: Constants.testNftId)
-        let nftViewController = assembly.build(with: nftInput) as! NftDetailViewController
+        
+        // Безопасное приведение типа
+        guard let nftViewController = assembly.build(with: nftInput) as? NftDetailViewController else {
+            // Fallback на случай ошибки
+            return UIViewController()
+        }
+        
         return nftViewController
     }
 
-    func updateUIViewController(_ uiViewController: NftDetailViewController, context: Context) {
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
         // Обновляет состояние указанного контроллера представления новой информацией из SwiftUI.
     }
 }

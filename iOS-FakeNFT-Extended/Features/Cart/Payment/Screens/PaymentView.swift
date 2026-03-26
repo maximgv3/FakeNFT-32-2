@@ -7,23 +7,34 @@
 
 import SwiftUI
 
-// MARK: - PaymentView
-
 struct PaymentView: View {
     
-    // MARK: - Properties
-    
     @Environment(\.dismiss) private var dismiss
-    @State private var selectedMethodID: String?
-    @State private var showingAgreement = false
+    @State private var viewModel: PaymentViewModel
     
-    private let agreementURL = URL(string: "https://yandex.ru/legal/practicum_termsofuse/")!
-    private let methods = PaymentMethod.mock 
+    @State private var showingAgreement = false
+    @State private var showSuccess = false
+    
+    private let agreementURLString = "https://yandex.ru/legal/practicum_termsofuse/"
+    private let onSuccess: () -> Void
     
     private let columns: [GridItem] = [
         GridItem(.flexible(), spacing: 7),
         GridItem(.flexible(), spacing: 7)
     ]
+    
+    // MARK: - Computed Properties
+    
+    private var agreementURL: URL? {
+        URL(string: agreementURLString)
+    }
+    
+    // MARK: - Init
+    
+    init(networkClient: NetworkClient, onSuccess: @escaping () -> Void) {
+        _viewModel = State(initialValue: PaymentViewModel(networkClient: networkClient))
+        self.onSuccess = onSuccess
+    }
     
     // MARK: - Body
     
@@ -36,13 +47,55 @@ struct PaymentView: View {
         .safeAreaInset(edge: .bottom) {
             footerView
         }
-        .background(backgroundView.ignoresSafeArea())
+        .background(Color("ypWhite").ignoresSafeArea())
         .navigationTitle("Выберите способ оплаты")
         .navigationBarTitleDisplayMode(.inline)
+        .task {
+            await viewModel.loadCurrencies()
+        }
+        .onChange(of: viewModel.isSuccess) { _, newValue in
+            showSuccess = newValue
+        }
+        .navigationDestination(isPresented: $showSuccess) {
+            PaymentSuccessView {
+                dismiss()
+                onSuccess()
+            }
+        }
         .navigationDestination(isPresented: $showingAgreement) {
-            WebView(url: agreementURL)
-                .navigationTitle("Пользовательское соглашение")
-                .navigationBarTitleDisplayMode(.inline)
+            if let url = agreementURL {
+                WebView(url: url)
+                    .navigationTitle("Пользовательское соглашение")
+                    .navigationBarTitleDisplayMode(.inline)
+            } else {
+                // fallback на случай, если URL невалидный
+                Text("Не удалось загрузить соглашение")
+            }
+        }
+        .alert(
+            "Не удалось произвести оплату",
+            isPresented: Binding(
+                get: { viewModel.errorMessage != nil },
+                set: { if !$0 { viewModel.resetError() } }
+            ),
+            actions: {
+                Button("Отмена", role: .cancel) {
+                    viewModel.resetError()
+                }
+                
+                Button("Повторить") {
+                    Task {
+                        await viewModel.retry()
+                    }
+                }
+            },
+            message: {
+                Text(viewModel.errorMessage ?? "")
+            }
+        )
+        .onDisappear {
+            viewModel.reset()
+            showSuccess = false
         }
     }
     
@@ -50,13 +103,13 @@ struct PaymentView: View {
     
     private var paymentMethodsGrid: some View {
         LazyVGrid(columns: columns, spacing: 7) {
-            ForEach(methods) { method in
+            ForEach(viewModel.paymentMethods) { method in
                 PaymentMethodCell(
                     method: method,
-                    isSelected: selectedMethodID == method.id
+                    isSelected: viewModel.selectedMethodID == method.id
                 )
                 .onTapGesture {
-                    selectedMethodID = method.id
+                    viewModel.selectedMethodID = method.id
                 }
             }
         }
@@ -77,30 +130,54 @@ struct PaymentView: View {
     private var agreementView: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text("Совершая покупку, вы соглашаетесь с условиями")
-                .font(.system(size: 13, weight: .regular))
+                .font(.system(size: 13))
                 .foregroundStyle(Color("ypBlack"))
             
             Button {
                 showingAgreement = true
             } label: {
                 Text("Пользовательского соглашения")
-                    .font(.system(size: 13, weight: .regular))
+                    .font(.system(size: 13))
                     .foregroundStyle(Color("ypUBlue"))
             }
+            .disabled(agreementURL == nil)  // блокируем кнопку, если URL невалидный
         }
     }
     
     private var payButton: some View {
         Button {
-            // TODO: - Обработка оплаты
+            Task {
+                await viewModel.pay()
+            }
         } label: {
-            Text("Оплатить")
-                .font(.system(size: 17, weight: .bold))
-                .foregroundStyle(Color("ypWhite"))
-                .frame(maxWidth: .infinity)
-                .frame(height: 60)
-                .background(Color("ypBlack"))
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+            ZStack {
+                if viewModel.isLoading {
+                    HStack(spacing: 8) {
+                        ProgressView()
+                            .tint(.ypWhite)
+                        Text("Оплата...")
+                            .font(.system(size: 17, weight: .bold))
+                    }
+                } else {
+                    Text("Оплатить")
+                        .font(.system(size: 17, weight: .bold))
+                }
+            }
+            .foregroundStyle(Color("ypWhite"))
+            .frame(maxWidth: .infinity)
+            .frame(height: 60)
+            .background(buttonBackgroundColor)
+            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .animation(.easeInOut(duration: 0.2), value: viewModel.isLoading)
+        }
+        .disabled(!viewModel.canPay)
+    }
+    
+    private var buttonBackgroundColor: Color {
+        if viewModel.canPay {
+            return Color("ypBlack")
+        } else {
+            return Color.gray
         }
     }
     
@@ -116,17 +193,14 @@ struct PaymentView: View {
             )
             .ignoresSafeArea(edges: .bottom)
     }
-    
-    private var backgroundView: Color {
-        Color("ypWhite")
-    }
 }
-
-// MARK: - Preview
 
 #Preview {
     NavigationStack {
-        PaymentView()
+        PaymentView(
+            networkClient: DefaultNetworkClient(),
+            onSuccess: { }
+        )
     }
     .preferredColorScheme(.light)
 }

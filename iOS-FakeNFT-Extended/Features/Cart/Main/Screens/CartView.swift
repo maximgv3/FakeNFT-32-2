@@ -13,6 +13,7 @@ struct CartView: View {
     
     // MARK: - Properties
     
+    @Environment(ServicesAssembly.self) private var servicesAssembly
     @State private var viewModel: CartViewModel
     @State private var isSortDialogPresented = false
     @State private var showPayment = false
@@ -36,32 +37,42 @@ struct CartView: View {
     // MARK: - Body
     
     var body: some View {
-        ZStack {
-            stateView
-            deleteOverlayView
-        }
-        .animation(.easeInOut(duration: 0.2), value: isDeleteConfirmationPresented)
-        .background(backgroundView.ignoresSafeArea())
-        .barsVisibility(hidden: isDeleteConfirmationPresented)
-        .toolbar {
-            if !isDeleteConfirmationPresented {
-                sortToolbar
+        NavigationStack {
+            ZStack {
+                stateView
+                deleteOverlayView
             }
-        }
-        .confirmationDialog(
-            "Сортировка",
-            isPresented: $isSortDialogPresented,
-            titleVisibility: .visible
-        ) {
-            sortDialog
-        }
-        .navigationDestination(isPresented: $showPayment) {
-            PaymentView()
+            .animation(.easeInOut(duration: 0.2), value: isDeleteConfirmationPresented)
+            .background(backgroundView.ignoresSafeArea())
+            .barsVisibility(hidden: isDeleteConfirmationPresented)
+            .toolbar {
+                if !isDeleteConfirmationPresented {
+                    sortToolbar
+                }
+            }
+            .confirmationDialog(
+                "Сортировка",
+                isPresented: $isSortDialogPresented,
+                titleVisibility: .visible
+            ) {
+                sortDialog
+            }
+            .navigationDestination(isPresented: $showPayment) {
+                PaymentView(
+                    networkClient: servicesAssembly.networkClient,
+                    onSuccess: {
+                        showPayment = false
+                        Task {
+                            await viewModel.refresh() 
+                        }
+                    }
+                )
                 .toolbar(.hidden, for: .tabBar)
                 .toolbarBackground(.hidden, for: .tabBar)
-        }
-        .task {
-            await viewModel.load()
+            }
+            .task {
+                await viewModel.load()
+            }
         }
     }
     
@@ -129,7 +140,9 @@ struct CartView: View {
                 viewModel.didTapRemove(on: item)
             },
             onRefresh: {
-                await viewModel.refresh()
+                Task {
+                    await viewModel.refresh()
+                }
             }
         )
         .safeAreaInset(edge: .bottom) {
@@ -204,18 +217,26 @@ struct CartView: View {
 // MARK: - Preview
 
 #Preview("Filled Cart") {
-    NavigationStack {
-        CartView(
-            viewModel: CartViewModel(cartService: MockCartService())
-        )
-    }
+    let services = ServicesAssembly(
+        networkClient: DefaultNetworkClient(),
+        nftStorage: NftStorageImpl()
+    )
+    
+    return CartView(
+        viewModel: CartViewModel(cartService: MockCartService())
+    )
+    .environment(services)
 }
 
 #Preview("Delete Confirmation") {
+    let services = ServicesAssembly(
+        networkClient: DefaultNetworkClient(),
+        nftStorage: NftStorageImpl()
+    )
+    
     let viewModel = CartViewModel(cartService: MockCartService())
     viewModel.itemPendingRemoval = .mock1
     
-    return NavigationStack {
-        CartView(viewModel: viewModel)
-    }
+    return CartView(viewModel: viewModel)
+        .environment(services)
 }
