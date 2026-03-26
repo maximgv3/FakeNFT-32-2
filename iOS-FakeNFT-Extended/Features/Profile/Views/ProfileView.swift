@@ -49,7 +49,16 @@ struct ProfileView: View {
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar(.hidden, for: .tabBar)
                 case .favoriteNFTs:
-                    FavouriteNFTsView()
+                    FavoriteNFTsView(
+                        nftIds: Binding(
+                            get: { viewModel?.profile?.likes ?? [] },
+                            set: { _ in }
+                        ),
+                        nftService: servicesAssembly.nftService,
+                        onRemoveFromFavorites: { id in
+                            await viewModel?.removeFavoriteNft(id: id)
+                        }
+                    )
                 case .webView:
                     if let profileWebsiteURL {
                         WebView(url: profileWebsiteURL)

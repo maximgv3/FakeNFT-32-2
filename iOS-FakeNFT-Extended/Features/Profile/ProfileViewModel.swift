@@ -44,4 +44,40 @@ final class ProfileViewModel {
         }
         
     }
+    
+    func removeFavoriteNft(id nftId: String) async {
+        guard let currentProfile = profile else { return }
+
+        errorMessage = nil
+
+        let updatedLikes = currentProfile.likes.filter { $0 != nftId }
+        let updatedProfile = Profile(
+            id: currentProfile.id,
+            name: currentProfile.name,
+            avatar: currentProfile.avatar,
+            description: currentProfile.description,
+            website: currentProfile.website,
+            nfts: currentProfile.nfts,
+            likes: updatedLikes
+        )
+
+        do {
+            profile = try await profileService.updateProfile(id: id, profile: updatedProfile)
+        } catch let error as NetworkClientError {
+            switch error {
+            case .httpStatusCode(let code):
+                errorMessage = "HTTP error: \(code)"
+            case .urlRequestError(let error):
+                errorMessage = "Request error: \(error.localizedDescription)"
+            case .urlSessionError:
+                errorMessage = "URL session error"
+            case .parsingError:
+                errorMessage = "Parsing error"
+            case .incorrectRequest(let message):
+                errorMessage = "Incorrect request: \(message)"
+            }
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
 }
