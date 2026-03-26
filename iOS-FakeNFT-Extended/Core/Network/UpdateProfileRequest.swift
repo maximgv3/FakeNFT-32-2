@@ -13,8 +13,12 @@ struct UpdateProfileRequest: NetworkRequest {
         components.append("avatar=\(encode(profile.avatar))")
         components.append("website=\(encode(profile.website))")
 
-        for like in profile.likes {
-            components.append("likes=\(encode(like))")
+        if profile.likes.isEmpty {
+            components.append("likes=null")
+        } else {
+            for like in profile.likes {
+                components.append("likes=\(encode(like))")
+            }
         }
 
         return components.joined(separator: "&").data(using: .utf8)

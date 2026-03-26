@@ -50,7 +50,8 @@ struct FavoriteNFTsView: View {
         } else if let errorMessage = viewModel.errorMessage {
             Text(errorMessage)
         } else if nftIds.isEmpty {
-            Text("Нет NFT")
+            Text("У Вас ещё нет избранных NFT")
+                .font(.system(size: 17, weight: .bold))
         } else {
             ScrollView {
                 LazyVGrid(columns: columns, spacing: 20) {
@@ -133,7 +134,7 @@ struct FavoriteNFTsView: View {
 
 }
 
-private struct MockNftService: NftService {
+struct MockNftService: NftService {
     func loadNft(id: String) async throws -> Nft {
         Nft(
             createdAt: "2026-03-26T00:00:00Z",

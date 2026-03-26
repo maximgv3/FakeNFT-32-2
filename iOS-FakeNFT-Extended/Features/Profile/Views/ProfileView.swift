@@ -3,7 +3,7 @@ import SwiftUI
 struct ProfileView: View {
     @Environment(ServicesAssembly.self) private var servicesAssembly
     @State private var viewModel: ProfileViewModel?
-
+    
     private enum Route: Hashable {
         case edit
         case myNFTs
@@ -44,7 +44,11 @@ struct ProfileView: View {
                 case .myNFTs:
                     MyNFTsView(
                         nftIds: viewModel?.profile?.nfts ?? [],
-                        nftService: servicesAssembly.nftService
+                        favoriteIds: viewModel?.profile?.likes ?? [],
+                        nftService: servicesAssembly.nftService,
+                        onToggleFavorite: { id in
+                            await viewModel?.toggleFavoriteNft(id: id)
+                        }
                     )
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar(.hidden, for: .tabBar)

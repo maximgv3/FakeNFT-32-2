@@ -4,9 +4,13 @@ struct MyNFTsView: View {
 
     @State private var viewModel: MyNFTsViewModel
     @State private var isSortDialogPresented = false
-
-    init(nftIds: [String], nftService: NftService) {
+    private let favoriteIds: [String]
+    private let onToggleFavorite: (String) async -> Void
+    
+    init(nftIds: [String], favoriteIds: [String], nftService: NftService, onToggleFavorite: @escaping (String) async -> Void) {
         _viewModel = State(initialValue: MyNFTsViewModel(nftService: nftService, nftIds: nftIds))
+        self.favoriteIds = favoriteIds
+        self.onToggleFavorite = onToggleFavorite
     }
     
     var body: some View {
@@ -88,7 +92,19 @@ struct MyNFTsView: View {
 
     private func nftRow(for nft: Nft) -> some View {
         HStack(spacing: 20) {
-            nftImageView(for: nft)
+            ZStack(alignment: .topTrailing) {
+                nftImageView(for: nft)
+                Button {
+                    Task {
+                        await onToggleFavorite(nft.id)
+                    }
+                } label: {
+                    Image(systemName: "heart.fill")
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundStyle(favoriteIds.contains(nft.id) ? .ypURed : .ypUWhite)
+                        .padding(10)
+                }
+            }
             nftInfoView(for: nft)
         }
     }
@@ -154,4 +170,20 @@ struct MyNFTsView: View {
         }
     }
 
+}
+
+#Preview {
+    @Previewable @State var nftIds = [
+        "b3907b86-37c4-4e15-95bc-7f8147a9a660",
+        "9810d484-c3fc-49e8-bc73-f5e602c36b40",
+        "7773e33c-ec15-4230-a102-92426a3a6d5a",
+    ]
+    
+    @Previewable @State var favorites = [
+        "b3907b86-37c4-4e15-95bc-7f8147a9a660"
+    ]
+    
+    NavigationStack {
+        MyNFTsView(nftIds: nftIds, favoriteIds: favorites, nftService: MockNftService(), onToggleFavorite: {_ in})
+    }
 }
