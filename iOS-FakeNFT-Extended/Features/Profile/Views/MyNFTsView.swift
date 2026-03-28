@@ -5,14 +5,16 @@ struct MyNFTsView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var viewModel: MyNFTsViewModel
     @State private var isSortDialogPresented = false
-    @State private var isFavoriteActionInProgress = false
     private let favoriteIds: [String]
-    private let onToggleFavorite: (String) async -> Void
     
     init(nftIds: [String], favoriteIds: [String], nftService: NftService, onToggleFavorite: @escaping (String) async -> Void) {
-        _viewModel = State(initialValue: MyNFTsViewModel(nftService: nftService, nftIds: nftIds))
+        _viewModel = State(initialValue: MyNFTsViewModel(
+            nftService: nftService,
+            nftIds: nftIds,
+            favoriteIds: favoriteIds,
+            onToggleFavorite: onToggleFavorite
+        ))
         self.favoriteIds = favoriteIds
-        self.onToggleFavorite = onToggleFavorite
     }
     
     var body: some View {
@@ -29,7 +31,7 @@ struct MyNFTsView: View {
                 nftListView
             }
 
-            if isFavoriteActionInProgress {
+            if viewModel.isFavoriteActionInProgress {
                 progressOverlay
             }
         }
@@ -73,7 +75,10 @@ struct MyNFTsView: View {
         .task {
             await viewModel.loadNFTs()
         }
-        .allowsHitTesting(!isFavoriteActionInProgress)
+        .onChange(of: favoriteIds) { _, newValue in
+            viewModel.syncFavoriteIds(newValue)
+        }
+        .allowsHitTesting(!viewModel.isFavoriteActionInProgress)
     }
 
     private var backgroundView: some View {
@@ -125,17 +130,13 @@ struct MyNFTsView: View {
             ZStack(alignment: .topTrailing) {
                 nftImageView(for: nft)
                 Button {
-                    guard !isFavoriteActionInProgress else { return }
-
                     Task {
-                        isFavoriteActionInProgress = true
-                        defer { isFavoriteActionInProgress = false }
-                        await onToggleFavorite(nft.id)
+                        await viewModel.toggleFavorite(nft.id)
                     }
                 } label: {
                     Image(systemName: "heart.fill")
                         .font(.system(size: 17, weight: .semibold))
-                        .foregroundStyle(favoriteIds.contains(nft.id) ? .ypURed : .ypUWhite)
+                        .foregroundStyle(viewModel.isFavorite(nft.id) ? .ypURed : .ypUWhite)
                         .padding(10)
                 }
             }
@@ -218,6 +219,6 @@ struct MyNFTsView: View {
     ]
     
     NavigationStack {
-        MyNFTsView(nftIds: nftIds, favoriteIds: favorites, nftService: MockNftService(), onToggleFavorite: {_ in})
+        MyNFTsView(nftIds: nftIds, favoriteIds: favorites, nftService: MockNftService(), onToggleFavorite: { _ in })
     }
 }

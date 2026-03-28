@@ -50,8 +50,10 @@ final class ProfileViewModel {
     }
 
     private func updateFavoriteNft(id nftId: String, shouldLike: Bool) async {
-        guard let currentProfile = profile else { return }
-        guard shouldLike ? !currentProfile.likes.contains(nftId) : currentProfile.likes.contains(nftId) else { return }
+        guard let currentProfile = profile,
+              shouldLike ? !currentProfile.likes.contains(nftId) : currentProfile.likes.contains(nftId) else {
+            return
+        }
 
         errorMessage = nil
 

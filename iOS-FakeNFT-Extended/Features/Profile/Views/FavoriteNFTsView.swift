@@ -4,8 +4,6 @@ struct FavoriteNFTsView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var viewModel: FavoriteNFTsViewModel
     @Binding var nftIds: [String]
-    @State private var isFavoriteActionInProgress = false
-    let onRemoveFromFavorites: (String) async -> Void
 
     init(
         nftIds: Binding<[String]>,
@@ -13,10 +11,12 @@ struct FavoriteNFTsView: View {
         onRemoveFromFavorites: @escaping (String) async -> Void
     ) {
         _viewModel = State(
-            initialValue: FavoriteNFTsViewModel(nftService: nftService)
+            initialValue: FavoriteNFTsViewModel(
+                nftService: nftService,
+                onRemoveFromFavorites: onRemoveFromFavorites
+            )
         )
         _nftIds = nftIds
-        self.onRemoveFromFavorites = onRemoveFromFavorites
     }
 
     var body: some View {
@@ -26,7 +26,7 @@ struct FavoriteNFTsView: View {
                     .padding(.horizontal, 16)
                     .padding(.top, 20)
 
-            if isFavoriteActionInProgress {
+            if viewModel.isFavoriteActionInProgress {
                 progressOverlay
             }
         }
@@ -52,16 +52,12 @@ struct FavoriteNFTsView: View {
                 await viewModel.loadNFTs(ids: newValue)
             }
         }
-        .allowsHitTesting(!isFavoriteActionInProgress)
+        .allowsHitTesting(!viewModel.isFavoriteActionInProgress)
     }
 
     private func removeNftLike(forId id: String) {
-        guard !isFavoriteActionInProgress else { return }
-
         Task {
-            isFavoriteActionInProgress = true
-            defer { isFavoriteActionInProgress = false }
-            await onRemoveFromFavorites(id)
+            await viewModel.removeFavorite(id)
         }
     }
 

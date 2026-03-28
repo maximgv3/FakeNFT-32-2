@@ -41,6 +41,7 @@ struct ProfileEditView: View {
         .navigationBarBackButtonHidden(true)
         .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .tabBar)
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
                 Button {
@@ -122,8 +123,7 @@ struct ProfileEditView: View {
         .background(Color.ypBlack)
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .disabled(viewModel.isLoading)
-        .padding(.horizontal, 16)
-        .padding(.bottom, 16)
+        .padding([.horizontal, .bottom], 16)
     }
 
     private func saveTapped() {
@@ -132,7 +132,9 @@ struct ProfileEditView: View {
                 let savedProfile = try await viewModel.saveProfile()
                 onSave(savedProfile)
                 dismiss()
-            } catch { }
+            } catch {
+                // Error state is handled inside viewModel.saveProfile()
+            }
         }
     }
 
