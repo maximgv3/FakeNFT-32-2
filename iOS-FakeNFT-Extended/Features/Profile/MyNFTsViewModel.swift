@@ -11,11 +11,13 @@ final class MyNFTsViewModel {
 
     private let nftService: NftService
     private let nftIds: [String]
-    var isLoading = false
-    var errorMessage: String?
-
+    private let onToggleFavorite: (String) async -> Void
     private let userDefaultsService: UserDefaultsService
 
+    var isLoading = false
+    var isFavoriteActionInProgress = false
+    var errorMessage: String?
+    var favoriteIds: [String]
     var nfts: [Nft] = []
     var selectedSort: SortOption
 
@@ -26,15 +28,18 @@ final class MyNFTsViewModel {
     init(
         nftService: NftService,
         nftIds: [String],
+        favoriteIds: [String],
+        onToggleFavorite: @escaping (String) async -> Void,
         userDefaultsService: UserDefaultsService = .shared
     ) {
         self.nftService = nftService
         self.nftIds = nftIds
+        self.favoriteIds = favoriteIds
+        self.onToggleFavorite = onToggleFavorite
         self.userDefaultsService = userDefaultsService
 
         if let savedValue = userDefaultsService.myNFTsSortOption,
-            let savedSort = SortOption(rawValue: savedValue)
-        {
+           let savedSort = SortOption(rawValue: savedValue) {
             selectedSort = savedSort
         } else {
             selectedSort = .rating
@@ -73,12 +78,29 @@ final class MyNFTsViewModel {
 
             nfts = loadedNfts
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = ErrorMessageMapper.message(from: error)
         }
     }
 
     func setSort(_ option: SortOption) {
         selectedSort = option
         userDefaultsService.myNFTsSortOption = option.rawValue
+    }
+
+    func syncFavoriteIds(_ newValue: [String]) {
+        favoriteIds = newValue
+    }
+
+    func isFavorite(_ nftId: String) -> Bool {
+        favoriteIds.contains(nftId)
+    }
+
+    func toggleFavorite(_ nftId: String) async {
+        guard !isFavoriteActionInProgress else { return }
+
+        isFavoriteActionInProgress = true
+        defer { isFavoriteActionInProgress = false }
+
+        await onToggleFavorite(nftId)
     }
 }

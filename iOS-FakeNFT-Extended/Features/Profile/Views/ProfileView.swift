@@ -1,9 +1,10 @@
 import SwiftUI
 
 struct ProfileView: View {
+    @Environment(\.dismiss) private var dismiss
     @Environment(ServicesAssembly.self) private var servicesAssembly
     @State private var viewModel: ProfileViewModel?
-
+    
     private enum Route: Hashable {
         case edit
         case myNFTs
@@ -31,16 +32,40 @@ struct ProfileView: View {
             .navigationDestination(for: Route.self) { route in
                 switch route {
                 case .edit:
-                    ProfileEditView()
+                    if let profile = viewModel?.profile {
+                        ProfileEditView(
+                            profile: profile,
+                            profileService: servicesAssembly.profileService
+                        ) { updatedProfile in
+                            viewModel?.profile = updatedProfile
+                        }
+                    } else {
+                        EmptyView()
+                    }
                 case .myNFTs:
                     MyNFTsView(
                         nftIds: viewModel?.profile?.nfts ?? [],
-                        nftService: servicesAssembly.nftService
+                        favoriteIds: viewModel?.profile?.likes ?? [],
+                        nftService: servicesAssembly.nftService,
+                        onToggleFavorite: { id in
+                            await viewModel?.toggleFavoriteNft(id: id)
+                        }
                     )
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar(.hidden, for: .tabBar)
                 case .favoriteNFTs:
-                    FavouriteNFTsView()
+                    FavoriteNFTsView(
+                        nftIds: Binding(
+                            get: { viewModel?.profile?.likes ?? [] },
+                            set: { _ in }
+                        ),
+                        nftService: servicesAssembly.nftService,
+                        onRemoveFromFavorites: { id in
+                            await viewModel?.removeFavoriteNft(id: id)
+                        }
+                    )
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar(.hidden, for: .tabBar)
                 case .webView:
                     if let profileWebsiteURL {
                         WebView(url: profileWebsiteURL)
@@ -57,6 +82,11 @@ struct ProfileView: View {
                     )
                 }
                 await viewModel?.loadProfile()
+            }
+        }
+        .onChange(of: viewModel?.errorMessage) { _, newValue in
+            if let newValue, !newValue.isEmpty {
+                path = []
             }
         }
     }
