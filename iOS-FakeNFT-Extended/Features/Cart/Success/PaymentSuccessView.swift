@@ -41,8 +41,6 @@ struct PaymentSuccessView: View {
         }
         .background(Color("ypWhite"))
         .navigationBarBackButtonHidden(true)
-        .toolbar(.hidden, for: .tabBar)
-        .toolbarBackground(.hidden, for: .tabBar)
     }
 }
 
