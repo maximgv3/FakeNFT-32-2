@@ -50,6 +50,8 @@ struct PaymentView: View {
         .background(Color("ypWhite").ignoresSafeArea())
         .navigationTitle("Выберите способ оплаты")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .tabBar)
+        .toolbarBackground(.hidden, for: .tabBar)
         .task {
             await viewModel.loadCurrencies()
         }
@@ -61,12 +63,16 @@ struct PaymentView: View {
                 dismiss()
                 onSuccess()
             }
+            .toolbar(.hidden, for: .tabBar)
+            .toolbarBackground(.hidden, for: .tabBar)
         }
         .navigationDestination(isPresented: $showingAgreement) {
             if let url = agreementURL {
                 WebView(url: url)
                     .navigationTitle("Пользовательское соглашение")
                     .navigationBarTitleDisplayMode(.inline)
+                    .toolbar(.hidden, for: .tabBar)
+                    .toolbarBackground(.hidden, for: .tabBar)
             } else {
                 // fallback на случай, если URL невалидный
                 Text("Не удалось загрузить соглашение")

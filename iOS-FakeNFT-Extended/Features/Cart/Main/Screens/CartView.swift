@@ -37,7 +37,6 @@ struct CartView: View {
     // MARK: - Body
     
     var body: some View {
-        NavigationStack {
             ZStack {
                 stateView
                 deleteOverlayView
@@ -64,8 +63,6 @@ struct CartView: View {
                         showPayment = false
                     }
                 )
-                .toolbar(.hidden, for: .tabBar)
-                .toolbarBackground(.hidden, for: .tabBar)
             }
             .onChange(of: showPayment) { _, newValue in
                 if !newValue {
@@ -75,7 +72,7 @@ struct CartView: View {
             .task {
                 await viewModel.load()
             }
-        }
+        
     }
     
     // MARK: - State View
