@@ -94,8 +94,9 @@ struct PaymentView: View {
             }
         )
         .onDisappear {
-            viewModel.reset()
-            showSuccess = false
+            if !showSuccess {
+                viewModel.reset()
+            }
         }
     }
     
