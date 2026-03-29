@@ -4,6 +4,7 @@ struct TabBarView: View {
     @Environment(ServicesAssembly.self) private var servicesAssembly
     @State private var selectedTab: AppTab = .profile
     @State private var cartPath = NavigationPath()
+    @State private var profilePath: [ProfileView.Route] = []
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -23,8 +24,9 @@ struct TabBarView: View {
     private func content(for tab: AppTab) -> some View {
         switch tab {
         case .profile:
-            NavigationStack {
-                ProfileView()
+            NavigationStack(path: $profilePath) {
+                ProfileView(path: $profilePath)
+                    .toolbar(profilePath.isEmpty ? .visible : .hidden, for: .tabBar)
             }
         case .catalog:
             NavigationStack {
