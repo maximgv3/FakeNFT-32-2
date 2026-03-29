@@ -78,8 +78,20 @@ actor DefaultNetworkClient: NetworkClient {
 
         if let body = request.body {
             urlRequest.httpBody = body
+
+            let hasContentType = request.headers.keys.contains {
+                $0.caseInsensitiveCompare("Content-Type") == .orderedSame
+            }
+
             for (headerField, value) in request.headers {
                 urlRequest.setValue(value, forHTTPHeaderField: headerField)
+            }
+
+            if !hasContentType {
+                urlRequest.setValue(
+                    "application/x-www-form-urlencoded",
+                    forHTTPHeaderField: "Content-Type"
+                )
             }
         } else if let dto = request.dto,
                   let dtoEncoded = try? encoder.encode(dto) {
