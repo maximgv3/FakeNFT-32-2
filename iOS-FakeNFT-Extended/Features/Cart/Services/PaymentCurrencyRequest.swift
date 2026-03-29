@@ -17,5 +17,5 @@ struct PaymentCurrencyRequest: NetworkRequest {
         URL(string: "\(RequestConstants.baseURL)/api/v1/orders/1/payment/\(currencyId)")
     }
     
-    var dto: Data? { nil }
+    var body: Data? { nil }
 }

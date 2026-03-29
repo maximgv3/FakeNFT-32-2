@@ -17,10 +17,14 @@ struct ExecuteOrderRequest: NetworkRequest {
         URL(string: "\(RequestConstants.baseURL)/api/v1/orders/1")
     }
     
-    var dto: Data? {
-        // ✅ Формат nfts=id1,id2,id3
-        let nftsString = nfts.joined(separator: ",")
-        let params = ["nfts": nftsString]
-        return params.percentEncoded()
+    var body: Data? {
+        let bodyString = nfts
+            .map { nft in
+                let encodedValue = nft.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? nft
+                return "nfts=\(encodedValue)"
+            }
+            .joined(separator: "&")
+
+        return bodyString.data(using: .utf8)
     }
 }

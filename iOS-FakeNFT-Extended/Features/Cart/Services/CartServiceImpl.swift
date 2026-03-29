@@ -98,7 +98,6 @@ actor CartServiceImpl: CartServiceProtocol {
             name: nft.name,
             price: nft.price,
             rating: nft.rating,
-            imageURL: nft.images.first
-        )
+            imageURL: nft.images.first.flatMap { URL(string: $0) }        )
     }
 }

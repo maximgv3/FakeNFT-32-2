@@ -21,7 +21,7 @@ struct UpdateOrderRequest: NetworkRequest {
         URL(string: "\(RequestConstants.baseURL)/api/v1/orders/1")
     }
     
-    var dto: Data? {
+    var body: Data? {
         if nfts.isEmpty {
             // ✅ Удаление последнего товара → пустое тело
             let params: [String: String] = [:]

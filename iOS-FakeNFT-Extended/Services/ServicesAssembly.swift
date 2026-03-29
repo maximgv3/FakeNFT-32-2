@@ -27,4 +27,7 @@ final class ServicesAssembly {
             nftService: nftService
         )
     }
+    var profileService: ProfileService {
+        ProfileServiceImpl(networkClient: networkClient)
+    }
 }

@@ -37,7 +37,6 @@ struct CartView: View {
     // MARK: - Body
     
     var body: some View {
-        NavigationStack {
             ZStack {
                 stateView
                 deleteOverlayView
@@ -62,18 +61,18 @@ struct CartView: View {
                     networkClient: servicesAssembly.networkClient,
                     onSuccess: {
                         showPayment = false
-                        Task {
-                            await viewModel.refresh() 
-                        }
                     }
                 )
-                .toolbar(.hidden, for: .tabBar)
-                .toolbarBackground(.hidden, for: .tabBar)
+            }
+            .onChange(of: showPayment) { _, newValue in
+                if !newValue {
+                    Task { await viewModel.refresh() }
+                }
             }
             .task {
                 await viewModel.load()
             }
-        }
+        
     }
     
     // MARK: - State View

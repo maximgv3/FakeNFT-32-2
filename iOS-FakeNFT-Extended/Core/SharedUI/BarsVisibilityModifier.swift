@@ -16,7 +16,6 @@ struct BarsVisibilityModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .toolbar(hidden ? .hidden : .visible, for: .navigationBar)
-            .toolbar(hidden ? .hidden : .visible, for: .tabBar)
     }
 }
 
