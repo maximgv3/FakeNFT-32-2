@@ -114,15 +114,13 @@ struct CollectionDetailView: View {
     private func nftSection(viewModel: CollectionDetailViewModel) -> some View {
         LazyVGrid(
             columns: Array(
-                repeating: GridItem(.flexible(), spacing: Constants.gridColumnSpacing),
+                repeating: GridItem(.flexible()),
                 count: 3
             ),
             spacing: Constants.gridRowSpacing
         ) {
             ForEach(Array(viewModel.nfts.enumerated()), id: \.offset) { _, nft in
-                RoundedRectangle(cornerRadius: Constants.nftCornerRadius)
-                    .fill(Color.ypLightGrey)
-                    .frame(height: Constants.nftCellHeight)
+                NftCollectionCell(nft: nft)
             }
         }
         .padding(.horizontal, Constants.horizontalPadding)
@@ -189,10 +187,7 @@ private extension CollectionDetailView {
         static let authorLineHeight: CGFloat = 20
         static let authorTopPadding: CGFloat = 8
         static let descriptionTopPadding: CGFloat = 5
-        static let gridColumnSpacing: CGFloat = 9
         static let gridRowSpacing: CGFloat = 8
-        static let nftCellHeight: CGFloat = 192
-        static let nftCornerRadius: CGFloat = 12
         static let nftTopPadding: CGFloat = 24
         static let nftBottomPadding: CGFloat = 24
     }
