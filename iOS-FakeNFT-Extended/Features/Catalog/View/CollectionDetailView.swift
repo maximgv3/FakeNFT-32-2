@@ -9,6 +9,7 @@ struct CollectionDetailView: View {
     @Environment(ServicesAssembly.self) private var servicesAssembly
     @State private var viewModel: CollectionDetailViewModel?
     @State private var isAuthorWebViewPresented = false
+    @State private var selectedNft: Nft?
     let collection: NftCollection
 
     // MARK: - Body
@@ -42,6 +43,9 @@ struct CollectionDetailView: View {
             if let url = authorURL {
                 WebView(url: url)
             }
+        }
+        .navigationDestination(item: $selectedNft) { _ in
+            NftDetailBridgeView()
         }
         .task {
             if viewModel == nil {
@@ -121,6 +125,9 @@ struct CollectionDetailView: View {
         ) {
             ForEach(Array(viewModel.nfts.enumerated()), id: \.offset) { _, nft in
                 NftCollectionCell(nft: nft)
+                    .onTapGesture {
+                        selectedNft = nft
+                    }
             }
         }
         .padding(.horizontal, Constants.horizontalPadding)
