@@ -18,9 +18,13 @@ struct ExecuteOrderRequest: NetworkRequest {
     }
     
     var body: Data? {
-        // ✅ Формат nfts=id1,id2,id3
-        let nftsString = nfts.joined(separator: ",")
-        let params = ["nfts": nftsString]
-        return params.percentEncoded()
+        let bodyString = nfts
+            .map { nft in
+                let encodedValue = nft.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? nft
+                return "nfts=\(encodedValue)"
+            }
+            .joined(separator: "&")
+
+        return bodyString.data(using: .utf8)
     }
 }
