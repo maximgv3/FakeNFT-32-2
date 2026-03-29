@@ -1,30 +1,62 @@
 import SwiftUI
 
 struct TabBarView: View {
-    
-    private enum TabBarIcon {
-        static let catalog = "square.stack.3d.up.fill"
-        static let profile = "person.crop.circle.fill"
-    }
-    
+    @Environment(ServicesAssembly.self) private var servicesAssembly
+    @State private var selectedTab: AppTab = .profile
+
     var body: some View {
-        TabView {
-            TestCatalogView()
-                .tabItem {
-                    Label(
-                        NSLocalizedString("Tab.catalog", comment: ""),
-                        systemImage: TabBarIcon.catalog
-                    )
+        TabView(selection: $selectedTab) {
+            ForEach(AppTab.allCases, id: \.self) { tab in
+                NavigationStack {
+                    content(for: tab)
                 }
-                .backgroundStyle(.background)
+                .tabItem {
+                    Image(tab.imageName)
+                    Text(tab.title)
+                }
+                .tag(tab)
+            }
+        }
+        .tint(.ypUBlue)
+    }
+
+    @ViewBuilder
+    private func content(for tab: AppTab) -> some View {
+        switch tab {
+        case .profile:
             ProfileView()
-                .tabItem {
-                    Label(
-                        NSLocalizedString("Tab.profile", comment: ""),
-                        systemImage: TabBarIcon.profile
-                    )
-                }
-                .backgroundStyle(.background)
+        case .catalog:
+            TestCatalogView()
+        case .cart:
+            CartView(viewModel: CartViewModel(cartService: servicesAssembly.cartService))
+        }
+    }
+}
+
+private enum AppTab: CaseIterable {
+    case profile
+    case catalog
+    case cart
+
+    var title: String {
+        switch self {
+        case .profile:
+            "Профиль"
+        case .catalog:
+            "Каталог"
+        case .cart:
+            "Корзина"
+        }
+    }
+
+    var imageName: String {
+        switch self {
+        case .profile:
+            "profile"
+        case .catalog:
+            "catalog"
+        case .cart:
+            "cartTabItem"
         }
     }
 }
