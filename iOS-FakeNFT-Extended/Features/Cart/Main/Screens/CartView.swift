@@ -13,15 +13,15 @@ struct CartView: View {
     
     // MARK: - Properties
     
-    @Environment(ServicesAssembly.self) private var servicesAssembly
     @State private var viewModel: CartViewModel
     @State private var isSortDialogPresented = false
-    @State private var showPayment = false
+    let onOpenPayment: () -> Void
     
     // MARK: - Init
     
-    init(viewModel: CartViewModel) {
+    init(viewModel: CartViewModel, onOpenPayment: @escaping () -> Void) {
         _viewModel = State(initialValue: viewModel)
+        self.onOpenPayment = onOpenPayment
     }
     
     // MARK: - Computed Properties
@@ -55,19 +55,6 @@ struct CartView: View {
                 titleVisibility: .visible
             ) {
                 sortDialog
-            }
-            .navigationDestination(isPresented: $showPayment) {
-                PaymentView(
-                    networkClient: servicesAssembly.networkClient,
-                    onSuccess: {
-                        showPayment = false
-                    }
-                )
-            }
-            .onChange(of: showPayment) { _, newValue in
-                if !newValue {
-                    Task { await viewModel.refresh() }
-                }
             }
             .task {
                 await viewModel.load()
@@ -170,7 +157,7 @@ struct CartView: View {
         CartFooterView(
             totalCount: viewModel.items.count,
             totalPrice: total,
-            payAction: { showPayment = true }
+            payAction: onOpenPayment
         )
     }
     
@@ -222,7 +209,8 @@ struct CartView: View {
     )
     
     return CartView(
-        viewModel: CartViewModel(cartService: MockCartService())
+        viewModel: CartViewModel(cartService: MockCartService()),
+        onOpenPayment: { }
     )
     .environment(services)
 }
@@ -236,6 +224,6 @@ struct CartView: View {
     let viewModel = CartViewModel(cartService: MockCartService())
     viewModel.itemPendingRemoval = .mock1
     
-    return CartView(viewModel: viewModel)
+    return CartView(viewModel: viewModel, onOpenPayment: { })
         .environment(services)
 }

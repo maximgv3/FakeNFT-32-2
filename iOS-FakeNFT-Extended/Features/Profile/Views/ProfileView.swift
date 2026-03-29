@@ -5,84 +5,84 @@ struct ProfileView: View {
     @Environment(ServicesAssembly.self) private var servicesAssembly
     @State private var viewModel: ProfileViewModel?
     
-    private enum Route: Hashable {
+    enum Route: Hashable {
         case edit
         case myNFTs
         case favoriteNFTs
         case webView
     }
 
-    @State private var path: [Route] = []
+    @Binding private var path: [Route]
+
+    init(path: Binding<[Route]>) {
+        _path = path
+    }
 
     var body: some View {
-        NavigationStack(path: $path) {
-            ZStack {
-                Color.ypWhite
-                    .ignoresSafeArea()
+        ZStack {
+            Color.ypWhite
+                .ignoresSafeArea()
 
-                if viewModel?.isLoading == true {
-                    loadingView
-                } else if let errorMessage = viewModel?.errorMessage,
-                          !errorMessage.isEmpty {
-                    errorView(message: errorMessage)
+            if viewModel?.isLoading == true {
+                loadingView
+            } else if let errorMessage = viewModel?.errorMessage,
+                      !errorMessage.isEmpty {
+                errorView(message: errorMessage)
+            } else {
+                contentView
+            }
+        }
+        .navigationDestination(for: Route.self) { route in
+            switch route {
+            case .edit:
+                if let profile = viewModel?.profile {
+                    ProfileEditView(
+                        profile: profile,
+                        profileService: servicesAssembly.profileService
+                    ) { updatedProfile in
+                        viewModel?.profile = updatedProfile
+                    }
                 } else {
-                    contentView
+                    EmptyView()
                 }
-            }
-            .navigationDestination(for: Route.self) { route in
-                switch route {
-                case .edit:
-                    if let profile = viewModel?.profile {
-                        ProfileEditView(
-                            profile: profile,
-                            profileService: servicesAssembly.profileService
-                        ) { updatedProfile in
-                            viewModel?.profile = updatedProfile
-                        }
-                    } else {
-                        EmptyView()
+            case .myNFTs:
+                MyNFTsView(
+                    nftIds: viewModel?.profile?.nfts ?? [],
+                    favoriteIds: viewModel?.profile?.likes ?? [],
+                    nftService: servicesAssembly.nftService,
+                    onToggleFavorite: { id in
+                        await viewModel?.toggleFavoriteNft(id: id)
                     }
-                case .myNFTs:
-                    MyNFTsView(
-                        nftIds: viewModel?.profile?.nfts ?? [],
-                        favoriteIds: viewModel?.profile?.likes ?? [],
-                        nftService: servicesAssembly.nftService,
-                        onToggleFavorite: { id in
-                            await viewModel?.toggleFavoriteNft(id: id)
-                        }
-                    )
-                    .navigationBarTitleDisplayMode(.inline)
-                    .toolbar(.hidden, for: .tabBar)
-                case .favoriteNFTs:
-                    FavoriteNFTsView(
-                        nftIds: Binding(
-                            get: { viewModel?.profile?.likes ?? [] },
-                            set: { _ in }
-                        ),
-                        nftService: servicesAssembly.nftService,
-                        onRemoveFromFavorites: { id in
-                            await viewModel?.removeFavoriteNft(id: id)
-                        }
-                    )
-                    .navigationBarTitleDisplayMode(.inline)
-                    .toolbar(.hidden, for: .tabBar)
-                case .webView:
-                    if let profileWebsiteURL {
-                        WebView(url: profileWebsiteURL)
-                    } else {
-                        EmptyView()
+                )
+                .navigationBarTitleDisplayMode(.inline)
+            case .favoriteNFTs:
+                FavoriteNFTsView(
+                    nftIds: Binding(
+                        get: { viewModel?.profile?.likes ?? [] },
+                        set: { _ in }
+                    ),
+                    nftService: servicesAssembly.nftService,
+                    onRemoveFromFavorites: { id in
+                        await viewModel?.removeFavoriteNft(id: id)
                     }
+                )
+                .navigationBarTitleDisplayMode(.inline)
+            case .webView:
+                if let profileWebsiteURL {
+                    WebView(url: profileWebsiteURL)
+                } else {
+                    EmptyView()
                 }
             }
-            .task {
-                if viewModel == nil {
-                    viewModel = ProfileViewModel(
-                        profileService: servicesAssembly.profileService,
-                        id: "1"
-                    )
-                }
-                await viewModel?.loadProfile()
+        }
+        .task {
+            if viewModel == nil {
+                viewModel = ProfileViewModel(
+                    profileService: servicesAssembly.profileService,
+                    id: "1"
+                )
             }
+            await viewModel?.loadProfile()
         }
         .onChange(of: viewModel?.errorMessage) { _, newValue in
             if let newValue, !newValue.isEmpty {
