@@ -112,8 +112,22 @@ struct CollectionDetailView: View {
     }
 
     private func nftSection(viewModel: CollectionDetailViewModel) -> some View {
-        Text("NFT count: \(viewModel.nfts.count)")
-            .padding(.top, Constants.infoTopPadding)
+        LazyVGrid(
+            columns: Array(
+                repeating: GridItem(.flexible(), spacing: Constants.gridColumnSpacing),
+                count: 3
+            ),
+            spacing: Constants.gridRowSpacing
+        ) {
+            ForEach(Array(viewModel.nfts.enumerated()), id: \.offset) { _, nft in
+                RoundedRectangle(cornerRadius: Constants.nftCornerRadius)
+                    .fill(Color.ypLightGrey)
+                    .frame(height: Constants.nftCellHeight)
+            }
+        }
+        .padding(.horizontal, Constants.horizontalPadding)
+        .padding(.top, Constants.nftTopPadding)
+        .padding(.bottom, Constants.nftBottomPadding)
     }
 
     private var authorLine: some View {
@@ -156,10 +170,7 @@ struct CollectionDetailView: View {
     }
 
     private var authorURL: URL? {
-        let encoded = collection.website.addingPercentEncoding(
-            withAllowedCharacters: .urlQueryAllowed
-        )
-        return URL(string: encoded ?? collection.website)
+        return URL(string: "https://practicum.yandex.ru")
     }
 }
 
@@ -178,6 +189,12 @@ private extension CollectionDetailView {
         static let authorLineHeight: CGFloat = 20
         static let authorTopPadding: CGFloat = 8
         static let descriptionTopPadding: CGFloat = 5
+        static let gridColumnSpacing: CGFloat = 9
+        static let gridRowSpacing: CGFloat = 8
+        static let nftCellHeight: CGFloat = 192
+        static let nftCornerRadius: CGFloat = 12
+        static let nftTopPadding: CGFloat = 24
+        static let nftBottomPadding: CGFloat = 24
     }
 }
 
