@@ -30,7 +30,7 @@ struct TabBarView: View {
             }
         case .catalog:
             NavigationStack {
-                TestCatalogView()
+                CatalogView()
             }
         case .cart:
             NavigationStack(path: $cartPath) {

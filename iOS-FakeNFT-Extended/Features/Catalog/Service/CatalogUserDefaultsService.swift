@@ -1,7 +1,7 @@
 import Foundation
 
-final class UserDefaultsService {
-    static let shared = UserDefaultsService()
+final class CatalogUserDefaultsService {
+    static let shared = CatalogUserDefaultsService()
     private let defaults = UserDefaults.standard
     private init() {}
 

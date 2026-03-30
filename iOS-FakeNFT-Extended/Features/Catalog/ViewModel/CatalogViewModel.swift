@@ -29,11 +29,11 @@ final class CatalogViewModel {
     }
 
     private let catalogService: CatalogService
-    private let userDefaultsService: UserDefaultsService
+    private let userDefaultsService: CatalogUserDefaultsService
 
     // MARK: - Init
 
-    init(catalogService: CatalogService, userDefaultsService: UserDefaultsService = .shared) {
+    init(catalogService: CatalogService, userDefaultsService: CatalogUserDefaultsService = .shared) {
         self.catalogService = catalogService
         self.userDefaultsService = userDefaultsService
         self.selectedSortOption = userDefaultsService.sortOption

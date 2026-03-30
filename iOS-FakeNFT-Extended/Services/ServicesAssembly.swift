@@ -32,14 +32,14 @@ final class ServicesAssembly {
     }
 
     var catalogService: CatalogService {
-        CatalogServiceImpl(
-            networkClient: networkClient
-        )
-    }
+           CatalogServiceImpl(
+               networkClient: networkClient
+           )
+       }
 
-    var collectionDetailService: CollectionDetailService {
-        CollectionDetailServiceImpl(
-            networkClient: networkClient
-        )
-    }
-}
+       var collectionDetailService: CollectionDetailService {
+           CollectionDetailServiceImpl(
+               networkClient: networkClient
+           )
+       }
+   }

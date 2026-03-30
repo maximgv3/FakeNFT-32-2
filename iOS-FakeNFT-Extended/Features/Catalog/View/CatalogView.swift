@@ -14,6 +14,7 @@ struct CatalogView: View {
             ZStack {
                 if let viewModel, viewModel.isLoading {
                     ProgressView()
+                    .tint(.ypBlack)
                 } else {
                     collectionList
                         .toolbar {
