@@ -173,9 +173,8 @@ struct CollectionDetailView: View {
         )
         return URL(string: encoded ?? collection.cover)
     }
-
     private var authorURL: URL? {
-        return URL(string: "https://practicum.yandex.ru")
+        URL(string: Constants.authorWebsiteURL)
     }
 }
 
@@ -183,6 +182,7 @@ struct CollectionDetailView: View {
 
 private extension CollectionDetailView {
     enum Constants {
+        static let authorWebsiteURL = "https://practicum.yandex.ru"
         static let coverHeight: CGFloat = 310
         static let coverCornerRadius: CGFloat = 12
         static let backButtonSize: CGFloat = 24
@@ -197,14 +197,5 @@ private extension CollectionDetailView {
         static let gridRowSpacing: CGFloat = 8
         static let nftTopPadding: CGFloat = 24
         static let nftBottomPadding: CGFloat = 24
-    }
-}
-
-// MARK: - String Extension
-
-private extension String {
-    var capitalizedFirst: String {
-        guard let first else { return self }
-        return first.uppercased() + dropFirst()
     }
 }

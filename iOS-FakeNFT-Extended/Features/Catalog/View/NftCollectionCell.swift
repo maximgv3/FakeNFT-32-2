@@ -104,12 +104,3 @@ private extension NftCollectionCell {
         static let bottomPadding: CGFloat = 8
     }
 }
-
-// MARK: - String Extension
-
-private extension String {
-    var capitalizedFirst: String {
-        guard let first else { return self }
-        return first.uppercased() + dropFirst()
-    }
-}
