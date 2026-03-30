@@ -6,15 +6,28 @@ struct CollectionDetailView: View {
     // MARK: - Properties
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(ServicesAssembly.self) private var servicesAssembly
+    @State private var viewModel: CollectionDetailViewModel?
+    @State private var isAuthorWebViewPresented = false
+    @State private var selectedNft: Nft?
     let collection: NftCollection
 
     // MARK: - Body
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 0) {
-                coverSection
-                infoSection
+        ZStack {
+            ScrollView {
+                VStack(spacing: 0) {
+                    coverSection
+                    infoSection
+                    if let viewModel {
+                        nftSection(viewModel: viewModel)
+                    }
+                }
+            }
+
+            if viewModel?.isLoading == true {
+                ProgressView()
             }
         }
         .ignoresSafeArea(edges: .top)
@@ -25,6 +38,38 @@ struct CollectionDetailView: View {
             backButton
                 .padding(.leading, Constants.backButtonLeadingPadding)
                 .padding(.top, Constants.backButtonTopPadding)
+        }
+        .navigationDestination(isPresented: $isAuthorWebViewPresented) {
+            if let url = authorURL {
+                WebView(url: url)
+            }
+        }
+        .navigationDestination(item: $selectedNft) { _ in
+            NftDetailBridgeView()
+        }
+        .task {
+            if viewModel == nil {
+                viewModel = CollectionDetailViewModel(
+                    collection: collection,
+                    collectionDetailService: servicesAssembly.collectionDetailService
+                )
+            }
+            await viewModel?.loadNfts()
+        }
+        .alert(
+            NSLocalizedString("Error.title", comment: ""),
+            isPresented: Binding(
+                get: { viewModel?.showError ?? false },
+                set: { viewModel?.showError = $0 }
+            )
+        ) {
+            Button(NSLocalizedString("Error.repeat", comment: "")) {
+                Task {
+                    await viewModel?.loadNfts()
+                }
+            }
+        } message: {
+            Text(NSLocalizedString("Error.network", comment: ""))
         }
     }
 
@@ -70,16 +115,41 @@ struct CollectionDetailView: View {
         .padding(.top, Constants.infoTopPadding)
     }
 
-    private var authorLine: some View {
-        HStack(spacing: 0) {
-            Text("Автор коллекции: ")
-                .font(.system(size: 13))
-                .kerning(-0.08)
-                .foregroundStyle(Color.ypBlack)
-            Text(collection.author)
-                .font(.system(size: 15))
-                .foregroundStyle(Color.ypUBlue)
+    private func nftSection(viewModel: CollectionDetailViewModel) -> some View {
+        LazyVGrid(
+            columns: Array(
+                repeating: GridItem(.flexible()),
+                count: 3
+            ),
+            spacing: Constants.gridRowSpacing
+        ) {
+            ForEach(Array(viewModel.nfts.enumerated()), id: \.offset) { _, nft in
+                NftCollectionCell(nft: nft)
+                    .onTapGesture {
+                        selectedNft = nft
+                    }
+            }
         }
+        .padding(.horizontal, Constants.horizontalPadding)
+        .padding(.top, Constants.nftTopPadding)
+        .padding(.bottom, Constants.nftBottomPadding)
+    }
+
+    private var authorLine: some View {
+        Button {
+            isAuthorWebViewPresented = true
+        } label: {
+            HStack(spacing: 0) {
+                Text("Автор коллекции: ")
+                    .font(.system(size: 13))
+                    .kerning(-0.08)
+                    .foregroundStyle(Color.ypBlack)
+                Text(collection.author)
+                    .font(.system(size: 15))
+                    .foregroundStyle(Color.ypUBlue)
+            }
+        }
+        .buttonStyle(.plain)
     }
 
     private var backButton: some View {
@@ -103,12 +173,16 @@ struct CollectionDetailView: View {
         )
         return URL(string: encoded ?? collection.cover)
     }
+    private var authorURL: URL? {
+        URL(string: Constants.authorWebsiteURL)
+    }
 }
 
 // MARK: - Constants
 
 private extension CollectionDetailView {
     enum Constants {
+        static let authorWebsiteURL = "https://practicum.yandex.ru"
         static let coverHeight: CGFloat = 310
         static let coverCornerRadius: CGFloat = 12
         static let backButtonSize: CGFloat = 24
@@ -120,14 +194,8 @@ private extension CollectionDetailView {
         static let authorLineHeight: CGFloat = 20
         static let authorTopPadding: CGFloat = 8
         static let descriptionTopPadding: CGFloat = 5
-    }
-}
-
-// MARK: - String Extension
-
-private extension String {
-    var capitalizedFirst: String {
-        guard let first else { return self }
-        return first.uppercased() + dropFirst()
+        static let gridRowSpacing: CGFloat = 8
+        static let nftTopPadding: CGFloat = 24
+        static let nftBottomPadding: CGFloat = 24
     }
 }
