@@ -10,7 +10,9 @@ protocol NftDetailPresenter {
 // MARK: - State
 
 enum NftDetailState {
-    case initial, loading, failed(Error), data(Nft)
+    case initial, loading
+    case failed(Error)
+    case data(Nft)
 }
 
 final class NftDetailPresenterImpl: NftDetailPresenter {
@@ -43,19 +45,23 @@ final class NftDetailPresenterImpl: NftDetailPresenter {
 
     private func stateDidChange() async {
         switch state {
-            case .initial:
-                assertionFailure("can't move to initial state")
-            case .loading:
-                view?.showLoading()
-                await loadNft()
-            case .data(let nft):
-                view?.hideLoading()
-                let cellModels = nft.images.map { NftDetailCellModel(url: $0) }
-                view?.displayCells(cellModels)
-            case .failed(let error):
-                let errorModel = makeErrorModel(error)
-                view?.hideLoading()
-                view?.showError(errorModel)
+        case .initial:
+            assertionFailure("can't move to initial state")
+        case .loading:
+            view?.showLoading()
+            await loadNft()
+        case .data(let nft):
+            view?.hideLoading()
+            let cellModels: [NftDetailCellModel] = nft.images.compactMap {
+                image in
+                guard let url = URL(string: image) else { return nil }
+                return NftDetailCellModel(url: url)
+            }
+            view?.displayCells(cellModels)
+        case .failed(let error):
+            let errorModel = makeErrorModel(error)
+            view?.hideLoading()
+            view?.showError(errorModel)
         }
     }
 
@@ -71,14 +77,15 @@ final class NftDetailPresenterImpl: NftDetailPresenter {
     private func makeErrorModel(_ error: Error) -> ErrorModel {
         let message: String
         switch error {
-            case is NetworkClientError:
-                message = NSLocalizedString("Error.network", comment: "")
-            default:
-                message = NSLocalizedString("Error.unknown", comment: "")
+        case is NetworkClientError:
+            message = NSLocalizedString("Error.network", comment: "")
+        default:
+            message = NSLocalizedString("Error.unknown", comment: "")
         }
 
         let actionText = NSLocalizedString("Error.repeat", comment: "")
-        return ErrorModel(message: message, actionText: actionText) { [weak self] in
+        return ErrorModel(message: message, actionText: actionText) {
+            [weak self] in
             self?.state = .loading
         }
     }
