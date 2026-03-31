@@ -39,6 +39,8 @@
 
 ### Каталог
 
+https://github.com/user-attachments/assets/4a00fb23-b2b6-418d-88fe-8ce352037a3e
+
 #### Экран каталога
 
 - Отображает таблицу (`List`) с коллекциями NFT.
@@ -68,6 +70,8 @@
 
 ### Корзина
 
+https://github.com/user-attachments/assets/c49d10a3-0ae3-4e83-b9ec-be0aaa6cb533
+
 #### Экран заказа
 
 - Таблица (`List`) с NFT в корзине. Для каждого NFT указано:
@@ -96,6 +100,8 @@
   - При ошибке — всплывающее окно с кнопками «Повторить»/«Отмена».
 
 ### Профиль
+
+https://github.com/user-attachments/assets/c148a63e-bdb0-4cb0-b7be-89e230777f5a
 
 #### Экран профиля
 
