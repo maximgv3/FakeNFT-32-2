@@ -5,6 +5,7 @@ struct TabBarView: View {
     @State private var selectedTab: AppTab = .profile
     @State private var cartPath = NavigationPath()
     @State private var profilePath: [ProfileView.Route] = []
+    @State private var isCartDeleteOverlayPresented = false
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -38,6 +39,9 @@ struct TabBarView: View {
                     viewModel: CartViewModel(cartService: servicesAssembly.cartService),
                     onOpenPayment: {
                         cartPath.append(CartRoute.payment)
+                    },
+                    onDeleteOverlayVisibilityChanged: { isPresented in
+                        isCartDeleteOverlayPresented = isPresented
                     }
                 )
                 .navigationDestination(for: CartRoute.self) { route in
@@ -55,7 +59,7 @@ struct TabBarView: View {
                         }
                     }
                 }
-                .toolbar(cartPath.isEmpty ? .visible : .hidden, for: .tabBar)
+                .toolbar(cartPath.isEmpty && !isCartDeleteOverlayPresented ? .visible : .hidden, for: .tabBar)
             }
         }
     }

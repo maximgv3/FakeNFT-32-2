@@ -16,12 +16,18 @@ struct CartView: View {
     @State private var viewModel: CartViewModel
     @State private var isSortDialogPresented = false
     let onOpenPayment: () -> Void
+    let onDeleteOverlayVisibilityChanged: (Bool) -> Void
     
     // MARK: - Init
     
-    init(viewModel: CartViewModel, onOpenPayment: @escaping () -> Void) {
+    init(
+        viewModel: CartViewModel,
+        onOpenPayment: @escaping () -> Void,
+        onDeleteOverlayVisibilityChanged: @escaping (Bool) -> Void
+    ) {
         _viewModel = State(initialValue: viewModel)
         self.onOpenPayment = onOpenPayment
+        self.onDeleteOverlayVisibilityChanged = onDeleteOverlayVisibilityChanged
     }
     
     // MARK: - Computed Properties
@@ -44,6 +50,15 @@ struct CartView: View {
             .animation(.easeInOut(duration: 0.2), value: isDeleteConfirmationPresented)
             .background(backgroundView.ignoresSafeArea())
             .barsVisibility(hidden: isDeleteConfirmationPresented)
+            .onAppear {
+                onDeleteOverlayVisibilityChanged(isDeleteConfirmationPresented)
+            }
+            .onChange(of: isDeleteConfirmationPresented) { _, newValue in
+                onDeleteOverlayVisibilityChanged(newValue)
+            }
+            .onDisappear {
+                onDeleteOverlayVisibilityChanged(false)
+            }
             .toolbar {
                 if !isDeleteConfirmationPresented {
                     sortToolbar
@@ -210,7 +225,8 @@ struct CartView: View {
     
     return CartView(
         viewModel: CartViewModel(cartService: MockCartService()),
-        onOpenPayment: { }
+        onOpenPayment: { },
+        onDeleteOverlayVisibilityChanged: { _ in }
     )
     .environment(services)
 }
@@ -224,6 +240,10 @@ struct CartView: View {
     let viewModel = CartViewModel(cartService: MockCartService())
     viewModel.itemPendingRemoval = .mock1
     
-    return CartView(viewModel: viewModel, onOpenPayment: { })
+    return CartView(
+        viewModel: viewModel,
+        onOpenPayment: { },
+        onDeleteOverlayVisibilityChanged: { _ in }
+    )
         .environment(services)
 }
