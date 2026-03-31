@@ -220,14 +220,14 @@ struct ProfileView: View {
         .frame(width: 70, height: 70)
         .clipShape(Circle())
     }
-    
+
     private var avatarPlaceholder: some View {
         Image(systemName: "person.crop.circle.fill")
             .resizable()
             .scaledToFill()
             .foregroundStyle(.ypBlack)
     }
-    
+
     private func nftMenuRow(
         title: String,
         count: Int?,

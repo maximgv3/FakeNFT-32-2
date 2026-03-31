@@ -24,4 +24,9 @@ actor MockCartService: CartServiceProtocol {
         
         return (items, mockOrderId)
     }
+    func addItem(id: String) async throws -> ([CartItem], orderId: String) {
+        try await Task.sleep(nanoseconds: 500_000_000)
+        items.append(CartItem(id: id, name: "Mock", price: 0, rating: 0, imageURL: nil))
+        return (items, mockOrderId)
+    }
 }

@@ -2,18 +2,18 @@ import SwiftUI
 import Kingfisher
 
 struct CollectionDetailView: View {
-    
+
     // MARK: - Properties
-    
+
     @Environment(\.dismiss) private var dismiss
     @Environment(ServicesAssembly.self) private var servicesAssembly
     @State private var viewModel: CollectionDetailViewModel?
     @State private var isAuthorWebViewPresented = false
     @State private var selectedNft: Nft?
     let collection: NftCollection
-    
+
     // MARK: - Body
-    
+
     var body: some View {
         ZStack {
             ScrollView {
@@ -25,7 +25,7 @@ struct CollectionDetailView: View {
                     }
                 }
             }
-            
+
             if viewModel?.isLoading == true {
                 ProgressView()
                     .tint(.ypBlack)
@@ -52,7 +52,9 @@ struct CollectionDetailView: View {
             if viewModel == nil {
                 viewModel = CollectionDetailViewModel(
                     collection: collection,
-                    collectionDetailService: servicesAssembly.collectionDetailService
+                    collectionDetailService: servicesAssembly.collectionDetailService,
+                    profileService: servicesAssembly.profileService,
+                    cartService: servicesAssembly.cartService
                 )
             }
             await viewModel?.loadNfts()
@@ -73,9 +75,9 @@ struct CollectionDetailView: View {
             Text(NSLocalizedString("Error.network", comment: ""))
         }
     }
-    
+
     // MARK: - Subviews
-    
+
     private var coverSection: some View {
         KFImage(coverURL)
             .resizable()
@@ -92,7 +94,7 @@ struct CollectionDetailView: View {
                 )
             )
     }
-    
+
     private var infoSection: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text(collection.name.capitalizedFirst)
@@ -100,11 +102,11 @@ struct CollectionDetailView: View {
                 .kerning(0.35)
                 .foregroundStyle(Color.ypBlack)
                 .frame(minHeight: Constants.titleLineHeight)
-            
+
             authorLine
                 .frame(minHeight: Constants.authorLineHeight)
                 .padding(.top, Constants.authorTopPadding)
-            
+
             Text(collection.description.capitalizedFirst)
                 .font(.system(size: 13))
                 .kerning(-0.08)
@@ -115,27 +117,29 @@ struct CollectionDetailView: View {
         .padding(.horizontal, Constants.horizontalPadding)
         .padding(.top, Constants.infoTopPadding)
     }
-    
+
     private func nftSection(viewModel: CollectionDetailViewModel) -> some View {
         LazyVGrid(
-            columns: Array(
-                repeating: GridItem(.flexible()),
-                count: 3
-            ),
+            columns: Array(repeating: GridItem(.flexible()), count: 3),
             spacing: Constants.gridRowSpacing
         ) {
             ForEach(Array(viewModel.nfts.enumerated()), id: \.offset) { _, nft in
-                NftCollectionCell(nft: nft)
-                    .onTapGesture {
-                        selectedNft = nft
-                    }
+                NftCollectionCell(
+                    nft: nft,
+                    isLiked: viewModel.likedNftIds.contains(nft.id),
+                    isInCart: viewModel.cartNftIds.contains(nft.id),
+                    onLikeTapped: { await viewModel.toggleLike(nftId: nft.id) },
+                    onCartTapped: { await viewModel.toggleCart(nftId: nft.id) }
+                )
+                .onTapGesture {
+                    selectedNft = nft
+                }
             }
         }
         .padding(.horizontal, Constants.horizontalPadding)
         .padding(.top, Constants.nftTopPadding)
         .padding(.bottom, Constants.nftBottomPadding)
     }
-    
     private var authorLine: some View {
         Button {
             isAuthorWebViewPresented = true
@@ -152,7 +156,7 @@ struct CollectionDetailView: View {
         }
         .buttonStyle(.plain)
     }
-    
+
     private var backButton: some View {
         Button {
             dismiss()
@@ -165,15 +169,16 @@ struct CollectionDetailView: View {
                 .foregroundStyle(Color.ypBlack)
         }
     }
-    
+
     // MARK: - Private
-    
+
     private var coverURL: URL? {
         let encoded = collection.cover.addingPercentEncoding(
             withAllowedCharacters: .urlQueryAllowed
         )
         return URL(string: encoded ?? collection.cover)
     }
+
     private var authorURL: URL? {
         URL(string: Constants.authorWebsiteURL)
     }

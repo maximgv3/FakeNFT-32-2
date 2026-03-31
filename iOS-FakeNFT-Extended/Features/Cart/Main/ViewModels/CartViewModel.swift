@@ -53,10 +53,16 @@ final class CartViewModel {
     
     init(cartService: CartServiceProtocol) {
         self.cartService = cartService
-        
+
         if let rawValue = UserDefaults.standard.string(forKey: Constants.selectedSortKey),
            let savedSort = CartSortOption(rawValue: rawValue) {
             selectedSort = savedSort
+        }
+
+        Task { @MainActor in
+            for await _ in NotificationCenter.default.notifications(named: .cartDidUpdate) {
+                await self.refresh()
+            }
         }
     }
     

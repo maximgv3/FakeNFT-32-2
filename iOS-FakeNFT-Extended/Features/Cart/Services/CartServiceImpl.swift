@@ -68,6 +68,20 @@ actor CartServiceImpl: CartServiceProtocol {
         return (items, updatedOrder.id)
     }
     
+    func addItem(id: String) async throws -> ([CartItem], orderId: String) {
+        let currentOrder: Order = try await networkClient.send(request: OrderRequest())
+        var updatedIds = currentOrder.nfts
+        guard !updatedIds.contains(id) else {
+            return (try await makeCartItems(from: updatedIds), currentOrder.id)
+        }
+        updatedIds.append(id)
+        let updatedOrder: Order = try await networkClient.send(
+            request: UpdateOrderRequest(nfts: updatedIds)
+        )
+        let items = try await makeCartItems(from: updatedIds)
+        return (items, updatedOrder.id)
+    }
+    
     private func makeCartItems(from ids: [String]) async throws -> [CartItem] {
         guard !ids.isEmpty else { return [] }
         

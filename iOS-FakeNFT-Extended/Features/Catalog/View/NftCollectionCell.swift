@@ -2,15 +2,17 @@ import SwiftUI
 import Kingfisher
 
 struct NftCollectionCell: View {
-    
+
     // MARK: - Properties
-    
+
     let nft: Nft
-    @State private var isLiked: Bool = false
-    @State private var isInCart: Bool = false
-    
+    let isLiked: Bool
+    let isInCart: Bool
+    let onLikeTapped: () async -> Void
+    let onCartTapped: () async -> Void
+
     // MARK: - Body
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             imageSection
@@ -22,9 +24,9 @@ struct NftCollectionCell: View {
             Spacer()
         }
     }
-    
+
     // MARK: - Subviews
-    
+
     private var imageSection: some View {
         ZStack(alignment: .topTrailing) {
             KFImage(nftImageURL)
@@ -33,9 +35,9 @@ struct NftCollectionCell: View {
                 .frame(maxWidth: .infinity)
                 .aspectRatio(1, contentMode: .fit)
                 .clipShape(RoundedRectangle(cornerRadius: Constants.imageCornerRadius))
-            
+
             Button {
-                isLiked.toggle()
+                Task { await onLikeTapped() }
             } label: {
                 Image(isLiked ? .active : .noActive)
                     .renderingMode(.original)
@@ -43,7 +45,7 @@ struct NftCollectionCell: View {
             }
         }
     }
-    
+
     private var ratingSection: some View {
         HStack(spacing: Constants.starSpacing) {
             ForEach(1...5, id: \.self) { index in
@@ -54,7 +56,7 @@ struct NftCollectionCell: View {
             }
         }
     }
-    
+
     private var infoSection: some View {
         HStack(alignment: .center, spacing: 0) {
             VStack(alignment: .leading, spacing: Constants.priceTopPadding) {
@@ -63,16 +65,16 @@ struct NftCollectionCell: View {
                     .foregroundStyle(Color.ypBlack)
                     .lineLimit(1)
                     .truncationMode(.tail)
-                
+
                 Text("\(String(format: "%.2f", nft.price)) ETH")
                     .font(.system(size: 10, weight: .medium))
                     .kerning(-0.24)
                     .foregroundStyle(Color.ypBlack)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            
+
             Button {
-                isInCart.toggle()
+                Task { await onCartTapped() }
             } label: {
                 Image(isInCart ? .cartCross : .cart)
                     .renderingMode(.original)
@@ -81,13 +83,14 @@ struct NftCollectionCell: View {
             }
         }
     }
-    
+
     // MARK: - Private
-    
+
     private var nftImageURL: URL? {
         nft.images.first.flatMap { URL(string: $0) }
     }
 }
+
 // MARK: - Constants
 
 private extension NftCollectionCell {
