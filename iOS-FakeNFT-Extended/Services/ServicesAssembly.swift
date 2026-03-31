@@ -30,4 +30,16 @@ final class ServicesAssembly {
     var profileService: ProfileService {
         ProfileServiceImpl(networkClient: networkClient)
     }
-}
+
+    var catalogService: CatalogService {
+           CatalogServiceImpl(
+               networkClient: networkClient
+           )
+       }
+
+       var collectionDetailService: CollectionDetailService {
+           CollectionDetailServiceImpl(
+               networkClient: networkClient
+           )
+       }
+   }

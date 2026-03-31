@@ -1,0 +1,63 @@
+import SwiftUI
+import Kingfisher
+
+struct CatalogCollectionCell: View {
+
+    // MARK: - Properties
+
+    let name: String
+    let nftCount: Int
+    let coverURL: URL?
+
+    // MARK: - Body
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: Constants.imageToTextSpacing) {
+            coverImage
+            titleLabel
+        }
+        .contentShape(Rectangle())
+    }
+
+    // MARK: - Subviews
+
+    private var coverImage: some View {
+        KFImage(coverURL)
+            .placeholder {
+                RoundedRectangle(cornerRadius: Constants.cornerRadius)
+                    .fill(Color.ypLightGrey)
+            }
+            .resizable()
+            .scaledToFill()
+            .frame(height: Constants.imageHeight)
+            .clipped()
+            .clipShape(RoundedRectangle(cornerRadius: Constants.cornerRadius))
+    }
+
+    private var titleLabel: some View {
+        Text("\(name.capitalized) (\(nftCount))")
+            .font(Font(UIFont.bodyBold))
+            .foregroundStyle(Color.ypBlack)
+    }
+}
+
+// MARK: - Constants
+
+private extension CatalogCollectionCell {
+    enum Constants {
+        static let imageHeight: CGFloat = 140
+        static let cornerRadius: CGFloat = 12
+        static let imageToTextSpacing: CGFloat = 4
+    }
+}
+
+// MARK: - Preview
+
+#Preview {
+    CatalogCollectionCell(
+        name: "Peach",
+        nftCount: 11,
+        coverURL: nil
+    )
+    .padding(.horizontal, 16)
+}

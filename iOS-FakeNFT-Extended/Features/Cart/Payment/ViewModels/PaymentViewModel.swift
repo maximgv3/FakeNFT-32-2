@@ -132,6 +132,7 @@ final class PaymentViewModel {
                 
                 let clearRequest = ClearCartRequest()
                 let clearedOrder: Order = try await networkClient.send(request: clearRequest)
+                NotificationCenter.default.post(name: .cartDidUpdate, object: nil)
                 
                 print("🗑️ Cart cleared, orderId: \(clearedOrder.id)")
                 state = .success

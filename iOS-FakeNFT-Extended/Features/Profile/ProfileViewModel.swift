@@ -13,6 +13,13 @@ final class ProfileViewModel {
     init(profileService: ProfileService, id: String = "1") {
         self.profileService = profileService
         self.id = id
+
+        Task { @MainActor in
+            for await _ in NotificationCenter.default.notifications(named: .likesDidUpdate) {
+                self.profile = nil
+                await self.loadProfile()
+            }
+        }
     }
 
     func loadProfile() async {
@@ -20,17 +27,15 @@ final class ProfileViewModel {
 
         errorMessage = nil
         isLoading = true
-        defer {
-            isLoading = false
-        }
+        defer { isLoading = false }
 
         do {
             profile = try await profileService.loadProfile(id: id)
         } catch {
             handleError(error)
         }
-
     }
+
     func toggleFavoriteNft(id: String) async {
         guard let profile else { return }
 
