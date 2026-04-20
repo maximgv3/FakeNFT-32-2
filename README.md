@@ -48,7 +48,8 @@ The app is primarily built with **SwiftUI** and follows the **MVVM** pattern.
 
 ## Teamwork
 
-This project was developed in a team environment with Git workflow, pull requests, and feature documentation.
+This is a team project developed with Git workflow, pull requests, and code review.  
+Feature responsibilities and team contributions are described in the [Docs](https://github.com/maximgv3/FakeNFT-32-2/tree/main/Docs) folder.
 
 ## Result
 
