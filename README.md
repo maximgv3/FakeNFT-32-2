@@ -14,6 +14,7 @@ FakeNFT is an iOS app for browsing NFT collections, viewing NFT details, managin
 - Payment currency selection
 - Network-based data loading
 - Shared design system and reusable UI components
+- Supports iOS 17+
 
 ## Tech Stack
 
